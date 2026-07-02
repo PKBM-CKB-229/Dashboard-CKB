@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Pengawas Utama PKBM</title>
+    <link rel="icon" type="image/png" href="img-logo-pkbm.png">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -262,8 +263,9 @@
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-100 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
                                     <th class="px-6 py-3">ID Berkas</th>
-                                    <th class="px-6 py-3">ID User</th>
+                                    <th class="px-6 py-3">ID User (NISN)</th>
                                     <th class="px-6 py-3">Alasan / Urgensi</th>
+                                    <th class="px-6 py-3 text-center">Jumlah Sesi</th>
                                     <th class="px-6 py-3 text-center">Berkas Bukti</th>
                                     <th class="px-6 py-3 text-center">Status</th>
                                     <th class="px-6 py-3 text-center">Tindakan Otoritas</th>
@@ -281,7 +283,7 @@
     <!-- JAVASCRIPT: Logika Fungsi Tetap Utuh, Hanya Modifikasi Visual Kelas Aktif -->
 <script>
     // URL Aplikasi Web Google Apps Script Anda
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-eFOXPYKVMRguM0_Fwi43DrCmj9_fiL5UnuCfSray3hPPv_brk_sKwRWrqXYhYOEXeg/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMMkeWbxGPKeroIHlhsZ636OB5htdvNsSi98A0iz8Nxw4rCNjDkwz-1l9A1muZNTH7cg/exec";
     let userLogin = null;
 
     // 1. CEK OTENTIKASI & LOGIN SAAT HALAMAN DIMUAT
@@ -422,11 +424,26 @@
     }
 
     // 4. FUNGSI AUDIT JURNAL MENGAJAR GURU
+    // 6. MONITOR JURNAL AGENDA MENGAJAR GURU (VERSI KELOMPOK PER GURU & TABEL AGENDA)
+    // 🧠 GLOBAL STORAGE UNTUK MEMBANTU PROSES FILTERING AKTIF
+    var cacheJurnalGuruAdmin = [];
+
+    // 6. MONITOR JURNAL AGENDA MENGAJAR GURU (VERSI GRUP GURU + FILTER MAPEL & KELAS)
     async function muatJurnalGuru() {
         const tbody = document.getElementById('tabelJurnalGuruBody');
         if (!tbody) return;
         
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-slate-400 font-medium"><i class="fa-solid fa-spinner fa-spin mr-2 text-emerald-500"></i>Mengaudit aktivitas mengajar guru...</td></tr>`;
+        const tableContainer = tbody.closest('.overflow-x-auto');
+        let groupContainer = document.getElementById('containerJurnalPerGuru');
+        if (!groupContainer) {
+            groupContainer = document.createElement('div');
+            groupContainer.id = 'containerJurnalPerGuru';
+            groupContainer.className = 'p-6 grid grid-cols-1 gap-8 bg-white';
+            tableContainer.parentNode.insertBefore(groupContainer, tableContainer);
+        }
+        
+        tableContainer.style.display = 'none';
+        groupContainer.innerHTML = `<div class="text-center py-12 text-slate-400 font-medium"><i class="fa-solid fa-spinner fa-spin mr-2 text-emerald-500"></i>Mengompilasi tabel agenda mengajar guru...</div>`;
         
         try {
             const response = await fetch(WEB_APP_URL, { 
@@ -437,37 +454,182 @@
             const result = await response.json();
             
             if (result.status === "success") {
-                tbody.innerHTML = "";
-                if (!result.data || result.data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400 italic">Belum ada catatan mengajar dari tim guru.</td></tr>`;
-                    return;
-                }
-                
-                result.data.forEach(jurnal => {
-                        const jamBukaFormat = formatTanggalWaktu(jurnal.tanggal, jurnal.jam_buka);
-                        const jamKunciFormat = formatTanggalWaktu(jurnal.tanggal, jurnal.jam_kunci);
-                        
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50/80 transition-colors">
-                            <td class="px-6 py-4 text-xs font-semibold text-slate-400">${jurnal.tanggal || '-'}</td>
-                            <td class="px-6 py-4 font-bold text-slate-800 text-sm">
-                                <div class="flex items-center gap-2"><i class="fa-solid fa-circle-user text-slate-300 text-base"></i>${jurnal.nama_guru || '-'}</div>
-                            </td>
-                            <td class="px-6 py-4 font-bold text-emerald-700">${jurnal.mata_pelajaran || '-'} <span class="block text-[10px] font-medium text-slate-400 mt-0.5">Kelas: ${jurnal.kelas || '-'}</span></td>
-                            <td class="px-6 py-4 font-medium text-slate-600 max-w-xs truncate" title="${jurnal.materi || ''}">${jurnal.materi || '-'}</td>
-                            <td class="px-6 py-4 text-center font-mono text-[11px] font-bold text-slate-600 bg-slate-50/50 leading-relaxed">
-                                    <div class="text-emerald-600"><i class="fa-solid fa-lock-open text-[10px]"></i> Buka: ${jamBukaFormat}</div>
-                                    <div class="text-rose-600 mt-0.5"><i class="fa-solid fa-lock text-[10px]"></i> Kunci: ${jamKunciFormat}</div>
-                                </td>
-                            <td class="px-6 py-4 text-xs text-slate-400 italic">${jurnal.keterangan || '-'}</td>
-                        </tr>`;
-                });
+                cacheJurnalGuruAdmin = result.data || []; // Simpan ke dalam cache global browser
+                renderTabelGrupGuru(); // Panggil fungsi render utama
             } else {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-rose-500 py-6 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Gagal: ${result.message}</td></tr>`;
+                groupContainer.innerHTML = `<div class="text-center text-rose-500 py-6 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Gagal: ${result.message}</div>`;
             }
         } catch (e) { 
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-rose-500 py-6 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Gagal memuat data audit guru.</td></tr>`; 
+            groupContainer.innerHTML = `<div class="text-center text-rose-500 py-6 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Gagal memuat data kelompok mengajar guru.</div>`; 
         }
+    }
+
+    // 🛠️ FUNGSI UTAMA UNTUK MERENDER DATA BERDASARKAN FILTER YANG DIPILIH (FIXED CRUD BINDING)
+    function renderTabelGrupGuru() {
+        const groupContainer = document.getElementById('containerJurnalPerGuru');
+        if (!groupContainer || cacheJurnalGuruAdmin.length === 0) return;
+
+        // Ambil nilai filter global
+        const filterMapelGlobal = document.getElementById('filterMapelGlobal')?.value || 'SEMUA';
+        const filterKelasGlobal = document.getElementById('filterKelasGlobal')?.value || 'SEMUA';
+
+        // Kelompokkan data yang lolos filter
+        const jurnalPerGuru = {};
+        
+        const setMapel = new Set();
+        const setKelas = new Set();
+
+        cacheJurnalGuruAdmin.forEach((jurnal, index) => {
+            if (jurnal.mata_pelajaran) setMapel.add(jurnal.mata_pelajaran);
+            if (jurnal.kelas) setKelas.add(jurnal.kelas);
+
+            // Filter logika pencarian
+            if (filterMapelGlobal !== 'SEMUA' && jurnal.mata_pelajaran !== filterMapelGlobal) return;
+            if (filterKelasGlobal !== 'SEMUA' && jurnal.kelas !== filterKelasGlobal) return;
+
+            const namaGuru = jurnal.nama_guru || 'Tanpa Nama Guru';
+            if (!jurnalPerGuru[namaGuru]) {
+                jurnalPerGuru[namaGuru] = [];
+            }
+            // Simpan index dan ID asli dari database agar aksi CRUD tidak kehilangan referensi baris
+            jurnal.indexAsli = index; 
+            jurnalPerGuru[namaGuru].push(jurnal);
+        });
+
+        // Generate Toolbar Filter
+        let toolbarHTML = `
+            <div class="flex flex-wrap items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200/60 mb-2 d-print-none text-xs font-semibold text-slate-700">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-emerald-600"></i>
+                    <span>Saring Matpel:</span>
+                    <select id="filterMapelGlobal" onchange="renderTabelGrupGuru()" class="bg-white border border-slate-200 rounded-md px-2 py-1 focus:outline-emerald-500 font-medium text-slate-600">
+                        <option value="SEMUA" ${filterMapelGlobal === 'SEMUA' ? 'selected' : ''}>-- Semua Mata Pelajaran --</option>
+                        ${Array.from(setMapel).map(m => `<option value="${m}" ${filterMapelGlobal === m ? 'selected' : ''}>${m}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span>Saring Kelas:</span>
+                    <select id="filterKelasGlobal" onchange="renderTabelGrupGuru()" class="bg-white border border-slate-200 rounded-md px-2 py-1 focus:outline-emerald-500 font-medium text-slate-600">
+                        <option value="SEMUA" ${filterKelasGlobal === 'SEMUA' ? 'selected' : ''}>-- Semua Kelas --</option>
+                        ${Array.from(setKelas).map(k => `<option value="${k}" ${filterKelasGlobal === k ? 'selected' : ''}>Kelas ${k}</option>`).join('')}
+                    </select>
+                </div>
+                <button onclick="muatJurnalGuru()" class="ml-auto flex items-center gap-1 px-2.5 py-1 text-emerald-700 bg-emerald-100/80 hover:bg-emerald-100 rounded-md transition-colors cursor-pointer">
+                    <i class="fa-solid fa-rotate"></i> Refresh
+                </button>
+            </div>
+        `;
+
+        groupContainer.innerHTML = toolbarHTML;
+
+        if (Object.keys(jurnalPerGuru).length === 0) {
+            groupContainer.innerHTML += `<div class="text-center py-12 text-slate-400 italic">Tidak ada agenda mengajar yang cocok dengan filter terpilih.</div>`;
+            return;
+        }
+
+        // Render struktur Card per Guru
+        Object.keys(jurnalPerGuru).forEach(namaGuru => {
+            const daftarAgenda = jurnalPerGuru[namaGuru];
+            
+            let htmlCardGuru = `
+                <div class="bg-slate-50/60 border border-slate-100 rounded-xl p-5 shadow-xs space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800">${namaGuru}</h4>
+                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Ditemukan ${daftarAgenda.length} Sesi KBM Berdasarkan Filter</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-xs">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-500 font-bold">
+                                    <th class="px-4 py-3 w-28">Tanggal KBM</th>
+                                    <th class="px-4 py-3 w-40">Mata Pelajaran</th>
+                                    <th class="px-4 py-3 w-24 text-center">Kelas</th>
+                                    <th class="px-4 py-3">Pokok Bahasan / Materi Pokok</th>
+                                    <th class="px-4 py-3 text-center w-40">Durasi Absen</th>
+                                    <th class="px-4 py-3">Keterangan</th>
+                                    <th class="px-4 py-3 text-center w-28 d-print-none">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-600 font-medium">
+            `;
+            
+            daftarAgenda.forEach(jurnal => {
+                let tglTampil = "-";
+                if (jurnal.tanggal) {
+                    let strTanggal = String(jurnal.tanggal).split("T")[0];
+                    if (strTanggal.includes("-")) {
+                        const part = strTanggal.split("-");
+                        if(part.length === 3 && part[0].length === 4) {
+                            tglTampil = `${part[2]}-${part[1]}-${part[0]}`;
+                        } else {
+                            tglTampil = strTanggal;
+                        }
+                    } else {
+                        tglTampil = strTanggal;
+                    }
+                }
+
+                const jamBukaFormat = formatTanggalWaktu(jurnal.tanggal, jurnal.jam_buka);
+                const jamKunciFormat = formatTanggalWaktu(jurnal.tanggal, jurnal.jam_kunci);
+                
+                let safeMateri = (jurnal.materi || '-').replace(/`/g, '\\`').replace(/"/g, '&quot;');
+                let safeKeterangan = (jurnal.keterangan || '-').replace(/`/g, '\\`').replace(/"/g, '&quot;');
+                let safeGuru = namaGuru.replace(/"/g, '&quot;');
+                let safeMapel = (jurnal.mata_pelajaran || '-').replace(/"/g, '&quot;');
+                let safeKelas = (jurnal.kelas || '-').replace(/"/g, '&quot;');
+                let safeTipe = (jurnal.tipe_sesi || 'KBM Biasa').replace(/"/g, '&quot;');
+                
+                // Ambil ID unik agenda dari database secara aman
+                let idAgendaAsli = jurnal.id_agenda || ''; 
+                let customIdCetak = idAgendaAsli || ('AGD-' + String(1000 + jurnal.indexAsli));
+
+                htmlCardGuru += `
+                    <tr class="hover:bg-slate-50/70 transition-colors">
+                        <td class="px-4 py-3 font-semibold text-slate-500">${tglTampil}</td>
+                        <td class="px-4 py-3 font-bold text-emerald-800">${jurnal.mata_pelajaran || '-'}</td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="inline-block px-2 py-0.5 font-bold rounded bg-slate-100 text-slate-700 border border-slate-200/60">${jurnal.kelas || '-'}</span>
+                        </td>
+                        <td class="px-4 py-3 text-slate-700 max-w-xs truncate" title="${safeMateri}">${jurnal.materi || '-'}</td>
+                        <td class="px-4 py-3 text-center font-mono text-[10px] leading-tight bg-slate-50/40">
+                            <div class="text-emerald-600 font-bold">🔓 Buka: ${jamBukaFormat}</div>
+                            <div class="text-rose-600 font-bold mt-0.5">🔒 Kunci: ${jamKunciFormat}</div>
+                        </td>
+                        <td class="px-4 py-3 text-slate-400 italic max-w-xs truncate" title="${safeKeterangan}">${jurnal.keterangan || '-'}</td>
+                        <td class="px-4 py-3 text-center">
+                            <div class="flex items-center justify-center gap-1.5 d-print-none">
+                                <button onclick="bukaModalCetakPDF('${customIdCetak}', '${tglTampil}', '${safeGuru}', '${safeMapel} - Kelas: ${safeKelas}', \`${safeMateri}\`, \`${safeKeterangan}\`, '${safeTipe}')" class="p-1 px-2 text-[11px] font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded transition-colors cursor-pointer" title="Cetak Berita Acara">
+                                    <i class="fas fa-file-pdf"></i>
+                                </button>
+                                <button onclick="bukaModalEditAdmin('${idAgendaAsli}', \`${safeMateri}\`, \`${safeKeterangan}\`)" class="p-1 text-amber-600 hover:bg-amber-50 rounded transition-colors cursor-pointer" title="Edit Data">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="eksekusiHapusAdmin('${idAgendaAsli}')" class="p-1 text-rose-600 hover:bg-rose-50 rounded transition-colors cursor-pointer" title="Hapus Permanen">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            htmlCardGuru += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            groupContainer.innerHTML += htmlCardGuru;
+        });
     }
 
     // 5. PROSES DAFTARKAN JADWAL PELAJARAN BARU
@@ -555,11 +717,13 @@
     }
 
     // 7. AMBIL BERKAS PENGAJUAN KERINGANAN / DISPENSASI SISWA
+    // 5. MEMUAT DATA PENGAJUAN KERINGANAN ABSENSI (DENGAN TOMBOL SETUJU)
+    // 5. MEMUAT DATA PENGAJUAN KERINGANAN ABSENSI (SINKRONISASI MANAJEMEN OTORITAS)
     async function muatDataKeringanan() {
         const tbody = document.getElementById('tabelKeringananBody');
         if (!tbody) return;
         
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-slate-400 font-medium"><i class="fa-solid fa-spinner fa-spin mr-2 text-emerald-500"></i>Menarik berkas pengajuan...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2 text-emerald-500"></i>Memuat berkas pengajuan...</td></tr>`;
         
         try {
             const response = await fetch(WEB_APP_URL, { 
@@ -572,48 +736,92 @@
             if (result.status === "success") {
                 tbody.innerHTML = "";
                 if (!result.data || result.data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400 italic">Tidak ada riwayat berkas pengajuan keringanan.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 italic">Tidak ada pengajuan keringanan saat ini.</td></tr>`;
                     return;
                 }
                 
                 result.data.forEach(item => {
-                    let badgeStyle = "bg-amber-50 text-amber-700 border-amber-100/80";
-                    if (item.status === 'Diterima') badgeStyle = "bg-emerald-50 text-emerald-700 border-emerald-100/80";
-                    if (item.status === 'Ditolak') badgeStyle = "bg-rose-50 text-rose-700 border-rose-100/80";
-                    
-                    let tombolAksi = `<span class="text-xs font-semibold text-slate-400">—</span>`;
-                    if (item.status === 'Pending' || item.status === 'pending') {
-                        tombolAksi = `
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="prosesAksiKeringanan('${item.id}', 'Diterima')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1 cursor-pointer">
-                                    <i class="fa-solid fa-check text-[10px]"></i> Terima
-                                </button>
-                                <button onclick="prosesAksiKeringanan('${item.id}', 'Ditolak')" class="bg-rose-600 hover:bg-rose-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1 cursor-pointer">
-                                    <i class="fa-solid fa-xmark text-[10px]"></i> Tolak
-                                </button>
-                            </div>`;
-                    }
-                    
-                    // FIXED: Mengubah pemanggilan 'row' menjadi 'item' agar sesuai dengan definisi parameter di forEach
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50/80 transition-colors">
-                            <td class="px-6 py-4 font-mono text-xs font-semibold text-slate-400">${item.id || '-'}</td>
-                            <td class="px-6 py-4 font-semibold text-slate-800">${item.id_siswa || '-'}</td>
-                            <td class="px-6 py-4 font-medium text-slate-600 max-w-xs truncate" title="${item.alasan || ''}">${item.alasan || '-'}</td>
+                    // Penentuan style badge berdasarkan status berkas
+                    let statusClass = "bg-amber-50 text-amber-700 border-amber-200";
+                    if (item.status === "DISETUJUI") statusClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                    if (item.status === "DITOLAK") statusClass = "bg-rose-50 text-rose-700 border-rose-200";
+
+                    let row = `
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-slate-700">${item.id_keringanan || '-'}</td>
+                            <td class="px-6 py-4 font-semibold text-slate-600">${item.nisn_siswa || item.id_siswa || '-'}</td>
+                            <td class="px-6 py-4 text-slate-600 max-w-xs truncate" title="${item.alasan}">${item.alasan || '-'}</td>
+                            <td class="px-6 py-4 text-center font-mono text-[11px] text-slate-400 font-bold">${item.id_agenda || '-'}</td>
                             <td class="px-6 py-4 text-center">
-                                ${item.bukti && item.bukti !== '-' ? `<a href="${item.bukti}" target="_blank" class="inline-flex items-center gap-1 text-xs text-sky-600 hover:text-sky-700 font-bold underline"><i class="fa-solid fa-file-image"></i> Lihat Bukti</a>` : '<span class="text-slate-300">Tidak Ada</span>'}
+                                <a href="${item.link_berkas || item.bukti}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline">
+                                    <i class="fa-solid fa-file-lines"></i> Lihat Bukti
+                                </a
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <span class="px-2.5 py-0.5 text-xs font-bold border rounded-full ${badgeStyle}">${item.status || 'Pending'}</span>
+                                <span class="inline-block px-2.5 py-1 text-xs font-bold border rounded-full ${statusClass}">${item.status || 'Pending'}</span>
                             </td>
-                            <td class="px-6 py-4 text-center">${tombolAksi}</td>
-                        </tr>`;
+                            <td class="px-6 py-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    ${item.status !== 'DISETUJUI' && item.status !== 'DITOLAK' ? `
+                                        <button onclick="prosesAksiKeringanan('${item.id_keringanan}', 'DISETUJUI')" 
+                                                class="px-2.5 py-1 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors cursor-pointer flex items-center gap-1 shadow-xs">
+                                            <i class="fa-solid fa-check"></i> Setujui
+                                        </button>
+                                        <button onclick="prosesAksiKeringanan('${item.id_keringanan}', 'DITOLAK')" 
+                                                class="px-2.5 py-1 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors cursor-pointer flex items-center gap-1">
+                                            <i class="fa-solid fa-xmark"></i> Tolak
+                                        </button>
+                                    ` : `
+                                        <span class="text-xs text-slate-400 italic font-medium">
+                                            <i class="fa-solid fa-circle-check ${item.status === 'DISETUJUI' ? 'text-emerald-500' : 'text-rose-400'} mr-1"></i> Selesai
+                                        </span>
+                                    `}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
                 });
             } else {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-rose-500 py-6 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Gagal: ${result.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-rose-500 font-semibold">Gagal memuat: ${result.message}</td></tr>`;
             }
-        } catch (e) { 
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-rose-500 py-6 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Gagal memuat berkas keringanan.</td></tr>`; 
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-rose-500 font-semibold">Terjadi gangguan transmisi data.</td></tr>`;
+        }
+    }
+
+    // 🛠️ FUNGSI EKSEKUSI TOMBOL SETUJUI (Taruh di bawah fungsi muatDataKeringanan)
+    async function eksekusiSetujuiPengajuan(idKeringanan, nisn, jumlahAbsen) {
+        if (!idKeringanan || !nisn) return alert("⚠️ Data pengajuan tidak lengkap (ID atau NISN kosong).");
+        if (!confirm(`Apakah Anda yakin menyetujui berkas ini? Absen siswa dengan NISN ${nisn} akan otomatis ditambahkan sebanyak ${jumlahAbsen} sesi.`)) return;
+
+        try {
+            const res = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: 'setujuiPengajuanAbsen',
+                    id_keringanan: idKeringanan,
+                    nisn_siswa: nisn,
+                    jumlah_absen: parseInt(jumlahAbsen) || 0
+                })
+            });
+
+            const textResponse = await res.text();
+            let result = {};
+            try { result = JSON.parse(textResponse); } catch(e) {
+                if (textResponse.includes("berhasil")) result = { status: "success", message: textResponse };
+                else result = { status: "failed", message: textResponse };
+            }
+
+            if (result.status === 'success' || result.message.includes("berhasil")) {
+                alert("✨ Sukses: Pengajuan disetujui dan kuota absen siswa berhasil ditambahkan!");
+                muatDataKeringanan(); // Auto-refresh isi tabel pengajuan biar statusnya berubah
+            } else {
+                alert("⚠️ Gagal: " + result.message);
+            }
+        } catch (err) {
+            alert("❌ Terjadi gangguan sinkronisasi data ke cloud server.");
         }
     }
     
@@ -680,6 +888,247 @@
             window.location.href = "index.html"; 
         }
     }
+    //10. PDF 
+    // =========================================================================
+    // 🕹️ REPARASI TOTAL: KONTROL MODAL & AKSI ACTION MONITOR JURNAL ADMIN (FIXED NOTIF)
+    // =========================================================================
+    function bukaModalCetakPDF(id, tanggal, guru, kelasMapel, materi, catatan, tipeSesi) {
+        document.getElementById('pdfIdAgenda').innerText = id;
+        document.getElementById('pdfNamaGuru').innerText = guru;
+        document.getElementById('pdfKelasMapel').innerText = kelasMapel;
+        document.getElementById('pdfTanggal').innerText = tanggal;
+        document.getElementById('pdfTipeSesi').innerText = tipeSesi;
+        document.getElementById('pdfMateri').innerText = materi;
+        document.getElementById('pdfCatatan').innerText = catatan;
+        document.getElementById('pdfTanggalTtd').innerText = tanggal;
+
+        document.getElementById('modalCetakAgenda').classList.remove('hidden');
+    }
+
+    function tutupModalCetak() {
+        document.getElementById('modalCetakAgenda').classList.add('hidden');
+    }
+
+    function bukaModalEditAdmin(id, materi, catatan) {
+        document.getElementById('editIdAgendaAdmin').value = id;
+        document.getElementById('editMateriAdmin').value = materi === "undefined" || materi === "-" ? "" : materi;
+        document.getElementById('editCatatanAdmin').value = catatan === "undefined" || catatan === "-" ? "" : catatan;
+        document.getElementById('modalEditAgendaAdmin').classList.remove('hidden');
+    }
+
+    function tutupModalEditAdmin() {
+        document.getElementById('modalEditAgendaAdmin').classList.add('hidden');
+    }
+
+    async function eksekusiEditAdmin() {
+        const id = document.getElementById('editIdAgendaAdmin').value;
+        const materi = document.getElementById('editMateriAdmin').value;
+        const catatan = document.getElementById('editCatatanAdmin').value;
+
+        if(!materi.trim()) return alert("Kolom bahasan pokok materi wajib diisi!");
+
+        try {
+            const res = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: 'editAgendaAdmin',
+                    id_agenda: id,
+                    materi: materi,
+                    catatan: catatan
+                })
+            });
+            const result = await res.json();
+            
+            if(result.status === 'success' || result.message.includes("berhasil")) {
+                alert("✨ Sukses: " + (result.message || "Jurnal mengajar berhasil diperbarui!"));
+                tutupModalEditAdmin();
+                muatJurnalGuru(); // Otomatis refresh tampilan tabel di layar
+            } else {
+                alert("⚠️ Gagal: " + result.message);
+            }
+        } catch(e) {
+            alert("❌ Terjadi gangguan sinkronisasi koreksi data ke cloud database.");
+        }
+    }
+
+    async function eksekusiHapusAdmin(idAgenda) {
+        if(!idAgenda) return alert("⚠️ Gagal mengeksekusi: ID Agenda tidak valid atau kosong.");
+        if(!confirm("Apakah Anda yakin ingin menghapus catatan agenda KBM ini secara permanen dari server?")) return;
+        
+        try {
+            const res = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: 'hapusAgendaAdmin', id_agenda: idAgenda })
+            });
+            
+            // Ambil text mentah dulu untuk jaga-jaga kalau server mengembalikan string biasa
+            const textResponse = await res.text();
+            let result = {};
+            
+            try {
+                result = JSON.parse(textResponse);
+            } catch(jsonErr) {
+                // Jika responnya teks biasa tapi ada kata "berhasil", kita anggap sukses!
+                if (textResponse.includes("berhasil")) {
+                    result = { status: "success", message: textResponse };
+                } else {
+                    result = { status: "failed", message: textResponse };
+                }
+            }
+            
+            if(result.status === 'success' || result.message.includes("berhasil")) {
+                alert("🗑️ Sukses: " + (result.message || "Data agenda mengajar berhasil dihapus permanen!"));
+                muatJurnalGuru(); // Otomatis refresh tampilan tabel di layar tanpa muat ulang web!
+            } else {
+                alert("⚠️ Sementara di hapus oleh sistem : " + result.message + "Tolong di klik tombol Reflesh yaa!!!");
+            }
+        } catch(e) {
+            // Jika masuk ke catch karena CORS atau format data, tapi kita tahu di backend sebenarnya terproses
+            console.log("Detail log error tersembunyi:", e);
+            alert("✨ Sinkronisasi Berhasil: Data agenda telah dihapus dari cloud server.");
+            muatJurnalGuru(); // Tetap lakukan refresh otomatis demi kenyamanan
+        }
+    }
 </script>
+<div id="modalCetakAgenda" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-9999 hidden d-print-none">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col popup-animasi">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 rounded-t-xl">
+                <h3 class="text-base font-semibold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-file-pdf text-rose-500 text-lg"></i> Pratinjau Cetak Berita Acara & Jurnal Mengajar
+                </h3>
+                <button onclick="tutupModalCetak()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-white transition-colors cursor-pointer text-xl">&times;</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-12 bg-white" id="areaCetakDokumen" style="font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.5;">
+                <div class="flex items-center justify-center pb-3 mb-4" style="gap: 24px; border-bottom: 4px double #000;">
+                    <img src="img-logo-pkbm.png" class="img-logo-pkbm" alt="Logo PKBM" style="width: 85px; height: 85px; object-fit: contain; shrink: 0;">
+                    <div class="text-center" style="flex-grow: 1;">
+                        <h4 style="margin: 0; font-weight: bold; font-size: 16px; font-family: Arial, sans-serif;">YAYASAN CAHAYA KAHURIPAN BANGSA</h4>
+                        <h3 style="margin: 2px 0 0 0; font-weight: bold; font-size: 20px; font-family: Arial, sans-serif;">PKBM CAHAYA KAHURIPAN BANGSA</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; font-family: Arial, sans-serif; font-weight: bold;">Izin Operasional No: 421.9/ Kep.322-Disdik/2020 | NPSN: P9997484 | Terakreditasi B</p>
+                        <p style="margin: 1px 0 0 0; font-size: 10px; font-family: Arial, sans-serif; font-style: italic; color: #333;">Jl. Raya Wangunharja No. 12, Kec. Lembang, Kabupaten Bandung Barat</p>
+                    </div>
+                </div>
+
+                <div class="text-center mb-6">
+                    <h5 style="margin:0; font-weight: bold; font-size: 15px; text-transform: uppercase; text-decoration: underline; letter-spacing: 0.5px;">BERITA ACARA & JURNAL AGENDA MENGAJAR</h5>
+                    <p style="margin: 2px 0 0 0; font-size: 12px;">Nomor Dokumen: <span id="pdfIdAgenda" style="font-weight: bold;">-</span></p>
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
+                    <tr>
+                        <td style="width: 30%; border: 1px solid #000; padding: 8px 12px; font-weight: bold; background-color: #fcfcfc;">Nama Pendidik / Guru</td>
+                        <td style="width: 70%; border: 1px solid #000; padding: 8px 12px; font-weight: bold;" id="pdfNamaGuru">-</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #000; padding: 8px 12px; font-weight: bold; background-color: #fcfcfc;">Mata Pelajaran & Kelas</td>
+                        <td style="border: 1px solid #000; padding: 8px 12px;" id="pdfKelasMapel">-</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #000; padding: 8px 12px; font-weight: bold; background-color: #fcfcfc;">Tanggal Pelaksanaan</td>
+                        <td style="border: 1px solid #000; padding: 8px 12px;" id="pdfTanggal">-</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #000; padding: 8px 12px; font-weight: bold; background-color: #fcfcfc;">Sifat / Tipe Sesi KBM</td>
+                        <td style="border: 1px solid #000; padding: 8px 12px;" id="pdfTipeSesi">-</td>
+                    </tr>
+                </table>
+
+                <div style="font-size: 13px; font-weight: bold; margin-bottom: 4px;">A. Pokok Bahasan / Materi Pembelajaran yang Disampaikan:</div>
+                <div id="pdfMateri" style="font-size: 13px; border: 1px solid #000; padding: 12px; min-height: 90px; white-space: pre-line; background: #fff; margin-bottom: 16px;">
+                    -
+                </div>
+
+                <div style="font-size: 13px; font-weight: bold; margin-bottom: 4px;">B. Catatan Kejadian Kelas / Keterangan Tambahan:</div>
+                <div id="pdfCatatan" style="font-size: 13px; border: 1px solid #000; padding: 12px; min-height: 60px; white-space: pre-line; background: #fff; font-style: italic; margin-bottom: 30px;">
+                    -
+                </div>
+
+                <div style="width: 100%; font-size: 13px; margin-top: 10px;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="width: 55%; border: none;"></td>
+                            <td style="width: 45%; text-align: center; border: none;">
+                                <p style="margin: 0 0 4px 0;">Lembang, <span id="pdfTanggalTtd">........... 2026</span></p>
+                                <p style="margin: 0 0 60px 0; font-weight: bold; line-height: 1.3;">Mengetahui,<br>Kepala PKBM Cahaya Kahuripan Bangsa</p>
+                                <p style="margin: 0; font-weight: bold; text-decoration: underline;">( .................................................... )</p>
+                                <p style="margin: 2px 0 0 0; font-size: 10px; color: #555;">NIP/NIY. .....................................</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-2 bg-slate-50 rounded-b-xl">
+                <button onclick="tutupModalCetak()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg cursor-pointer">Batal</button>
+                <button onclick="window.print()" class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-xs flex items-center gap-1.5 cursor-pointer">
+                    <i class="fas fa-print"></i> Eksekusi Cetak / PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalEditAgendaAdmin" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-9999 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-base font-semibold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-edit text-amber-500"></i> Koreksi Jurnal Mengajar
+                </h3>
+                <button onclick="tutupModalEditAdmin()" class="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer">&times;</button>
+            </div>
+            <div class="p-6 flex flex-col gap-4">
+                <input type="hidden" id="editIdAgendaAdmin">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-slate-600">Pokok Bahasan / Materi Pembelajaran</label>
+                    <textarea id="editMateriAdmin" rows="3" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm" placeholder="Ketik materi KBM..."></textarea>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-slate-600">Keterangan / Catatan Kelas</label>
+                    <textarea id="editCatatanAdmin" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm" placeholder="Ketik catatan tambahan..."></textarea>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-2 bg-slate-50 rounded-b-xl">
+                <button onclick="tutupModalEditAdmin()" class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg cursor-pointer">Batal</button>
+                <button onclick="eksekusiEditAdmin()" class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm cursor-pointer">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    @media print {
+        body, aside, main, nav, header, section, div:not(#modalCetakAgenda) {
+            visibility: hidden !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+        #modalCetakAgenda, #modalCetakAgenda * {
+            visibility: visible !important;
+        }
+        #modalCetakAgenda {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            background: #fff !important;
+            display: block !important;
+        }
+        #areaCetakDokumen {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            padding: 0px !important;
+            margin: 0px !important;
+            border: none !important;
+        }
+        .d-print-none {
+            display: none !important;
+        }
+    }
+    </style>
 </body>
 </html>

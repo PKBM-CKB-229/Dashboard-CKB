@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ruang Kendali Guru - PKBM</title>
+    <link rel="icon" type="image/png" href="img-logo-pkbm.png">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -14,10 +15,10 @@
             <button onclick="toggleSidebar(true)" class="text-slate-500 hover:text-sky-600 p-2 text-xl focus:outline-none cursor-pointer transition-colors">
                 <i class="fa-solid fa-bars"></i>
             </button>
-                    <span class="flex items-center justify-center w-15 h-15 rounded-lg bg-white-500 text-white shadow-sm shadow-sky-500/30">
-                      <img src="img-logo-pkbm.png" alt="Logo" class="w-13 h-13 object-contain onerror='this.style.display=\"none\"'">  
-                    </span>
-                    <span>PKBM Cahaya Kahuripan Bangsa</span>
+            <span class="flex items-center justify-center w-15 h-15 rounded-lg bg-white-500 text-white shadow-sm shadow-sky-500/30">
+                <img src="img-logo-pkbm.png" alt="Logo" class="w-13 h-13 object-contain" onerror="this.style.display='none'">  
+            </span>
+            <span class="font-semibold tracking-wide text-sm hidden sm:inline">PKBM Cahaya Kahuripan Bangsa</span>
         </div>
 
         <div class="flex items-center gap-4">
@@ -29,6 +30,7 @@
     </header>
 
     <div id="sidebarOverlay" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden transition-all"></div>
+    
     <aside id="sidebarMenu" class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-200 shadow-2xl z-50 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out">
         <div class="h-16 border-b border-slate-150 px-6 flex items-center justify-between bg-slate-50/50">
             <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Menu Panel</span>
@@ -39,17 +41,20 @@
                 <i class="fa-solid fa-calendar-days text-base w-5 text-center"></i> Jadwal Mengajar Anda
             </button>
             <button onclick="gantiHalaman('agenda')" id="menu-agenda" class="menu-btn w-full text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent hover:border-slate-100 font-medium flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm text-left cursor-pointer transition-all">
-                <i class="fa-solid fa-book-bookmark text-base w-5 text-center text-slate-400"></i> Isi Agenda Kelas
+                <i class="fa-solid fa-book-bookmark text-base w-5 text-center text-slate-400"></i> Kelola Agenda Kelas
+            </button>
+            <button onclick="gantiHalaman('presensi')" id="menu-presensi" class="menu-btn w-full text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent hover:border-slate-100 font-medium flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm text-left cursor-pointer transition-all">
+                <i class="fa-solid fa-qrcode text-base w-5 text-center text-slate-400"></i> Presensi Siswa (QR)
             </button>
         </nav>
     </aside>
 
-    <main class="flex-1 mt-16 p-4 max-w-xl mx-auto w-full space-y-6 pb-12 relative">
+    <main class="flex-1 mt-16 p-4 md:p-6 max-w-7xl mx-auto w-full space-y-6 pb-12 relative">
         
-        <div class="absolute top-12 left-1/2 -translate-x-1/2 w-80 h-80 bg-gradient-to-tr from-sky-400/10 to-emerald-400/10 blur-3xl rounded-full pointer-events-none"></div>
+        <div class="absolute top-12 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-tr from-sky-400/10 to-emerald-400/10 blur-3xl rounded-full pointer-events-none"></div>
 
-        <section id="page-jadwal" class="halaman-panel space-y-4 relative z-10">
-            <div class="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] space-y-4">
+        <section id="page-jadwal" class="halaman-panel relative z-10">
+            <div class="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] space-y-5">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                     <h3 class="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-2">
                         <i class="fa-solid fa-calendar-week text-sky-500 text-sm"></i> Plotting Jadwal Admin
@@ -59,111 +64,199 @@
                     </button>
                 </div>
 
-                <div class="overflow-hidden border border-slate-150 rounded-2xl bg-white shadow-xs">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-150 text-slate-500 font-bold tracking-wide">
-                                <th class="px-4 py-3.5">Kelas & Mapel</th>
-                                <th class="px-4 py-3.5 text-center">Waktu Tugas</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelJadwalGuruBody" class="divide-y divide-slate-100">
-                            <tr><td colspan="2" class="px-4 py-6 text-center text-slate-400 italic">Mengambil data penugasan...</td></tr>
-                        </tbody>
-                    </table>
+                <div id="tabelJadwalGuruBody" class="grid grid-columns-1 md:grid-columns-2 lg:grid-columns-3 gap-4">
+                    <div class="bg-white border border-slate-150 p-4 rounded-2xl shadow-xs flex justify-between items-center transition-all hover:border-sky-300">
+                        <div class="space-y-1">
+                            <h4 class="text-xs font-bold text-slate-800">Matematika</h4>
+                            <span class="inline-block text-[10px] bg-sky-50 text-sky-700 px-2 py-0.5 rounded-md font-bold">Paket B Online</span>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-slate-700">Senin</p>
+                            <p class="text-[11px] text-slate-400 font-medium">12:00 - 12:30</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-150 p-4 rounded-2xl shadow-xs flex justify-between items-center transition-all hover:border-sky-300">
+                        <div class="space-y-1">
+                            <h4 class="text-xs font-bold text-slate-800">Agama</h4>
+                            <span class="inline-block text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md font-bold">B Wangunharja</span>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-slate-700">Kamis</p>
+                            <p class="text-[11px] text-slate-400 font-medium">15:45 - 16:00</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="page-agenda" class="halaman-panel space-y-4 hidden relative z-10">
-            <div class="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] space-y-5">
-                <div>
-                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-pen-to-square text-sky-500"></i> Isi Berita Acara / Agenda
-                    </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Input materi pelajaran harian sebelum merilis QR-Code absensi siswa.</p>
-                </div>
-
-                <form id="formBukaAgenda" class="space-y-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Pilih Jadwal Mengajar Aktif</label>
-                        <select id="agendaJadwalPilihan" required class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner">
-                            <option value="">-- Pilih Jadwal Kelas Anda --</option>
-                        </select>
+        <section id="page-agenda" class="halaman-panel hidden relative z-10">
+            <div class="grid grid-columns-1 lg:grid-columns-12 gap-6 items-start">
+                
+                <div class="lg:col-span-5 bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] space-y-5">
+                    <div>
+                        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open text-sky-500"></i> Catatan Agenda Kelas
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Isi detail pembahasan materi kelas Anda.</p>
                     </div>
 
-                    <div class="space-y-1.5">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Tipe Sesi Pertemuan</label>
-                        <select id="agendaTipeSesi" required class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner">
-                            <option value="KBM">Kegiatan Belajar Mengajar (KBM) Biasa</option>
-                            <option value="UTS">Ujian Tengah Semester (UTS)</option>
-                            <option value="UAS">Ujian Akhir Semester (UAS)</option>
-                        </select>
-                    </div>
+                    <form id="formAgendaLokal" class="space-y-4">
+                        <input type="hidden" id="agendaEditId">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Pilih Jadwal Mengajar</label>
+                            <select id="agendaJadwalPilihan" required class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner">
+                                <option value="">-- Pilih Jadwal Kelas Anda --</option>
+                            </select>
+                        </div>
 
-                    <div class="space-y-1.5">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Pokok Pembahasan / Materi / Judul Ujian</label>
-                        <input type="text" id="agendaMateri" required class="w-full px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder-slate-400 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner" placeholder="Contoh: Aljabar Linear Bab II / Ujian Tengah Semester">
-                    </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Tipe Sesi Pertemuan</label>
+                            <select id="agendaTipeSesi" required class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner">
+                                <option value="KBM Biasa">Kegiatan Belajar Mengajar (KBM) Biasa</option>
+                                <option value="UTS">Ujian Tengah Semester (UTS)</option>
+                                <option value="UAS">Ujian Akhir Semester (UAS)</option>
+                            </select>
+                        </div>
 
-                    <div class="space-y-1.5">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Catatan Tambahan KBM (Opsional)</label>
-                        <textarea id="agendaCatatan" rows="3" class="w-full px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder-slate-400 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner" placeholder="Contoh: Kelas kondusif, 2 anak izin sakit."></textarea>
-                    </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Pokok Pembahasan / Materi</label>
+                            <input type="text" id="agendaMateri" required class="w-full px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder-slate-400 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner" placeholder="Contoh: Aljabar Linear Bab II">
+                        </div>
 
-                    <button type="submit" id="btnSimpanAgenda" class="w-full mt-2 relative overflow-hidden group/btn bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(14,165,233,0.3)] hover:shadow-[0_4px_20px_rgba(14,165,233,0.45)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer text-xs tracking-wide">
-                        <span class="absolute inset-0 w-full h-full bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></span>
-                        <i class="fa-solid fa-qrcode mr-1.5"></i> Simpan & Generate QR-Code
-                    </button>
-                </form>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Catatan Tambahan (Opsional)</label>
+                            <textarea id="agendaCatatan" rows="2" class="w-full px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder-slate-400 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner" placeholder="Contoh: Kelas kondusif, 2 anak izin."></textarea>
+                        </div>
 
-                <div id="boxQrTampil" class="hidden border-t border-slate-150 pt-5 text-center space-y-4">
-                    <p class="text-xs font-bold text-emerald-600 flex items-center justify-center gap-1.5"><i class="fa-solid fa-circle-check text-sm"></i> Sesi Kelas Berhasil Dibuka!</p>
-                    <div class="inline-block p-4 bg-white border border-slate-200 rounded-3xl shadow-md mx-auto transition-transform duration-500 hover:scale-[1.02]">
-                        <div id="canvasQrArea" class="w-48 h-48 bg-slate-50 flex items-center justify-center text-[10px] text-slate-400 rounded-2xl overflow-hidden">QR CODE IMAGE PLACEHOLDER</div>
-                    </div>
-                    <p class="text-[11px] text-slate-500 px-6 font-medium leading-relaxed">Siswa sekarang dapat melakukan pemindaian barcode ini langsung dari layar ponsel Anda.</p>
-                    
-                    <hr class="border-slate-150 my-2">
-
-                    <div class="text-left space-y-3">
-                        <div class="flex justify-between items-center">
-                            <h4 class="text-xs font-black text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
-                                <i class="fa-solid fa-users-viewfinder"></i> Monitor Kehadiran Kelas
-                            </h4>
-                            <button onclick="muatMonitorKehadiranSiswa()" class="text-[10px] font-bold bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer shadow-xs">
-                                <i class="fa-solid fa-rotate text-[9px]"></i> Refresh
+                        <div class="flex gap-2">
+                            <button type="submit" id="btnSimpanAgendaLokal" class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-xl transition-all text-xs tracking-wide cursor-pointer shadow-md shadow-sky-500/10">
+                                <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Catatan Agenda
+                            </button>
+                            <button type="button" id="btnBatalEditAgenda" onclick="resetFormAgenda()" class="hidden bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 px-4 rounded-xl transition-all text-xs cursor-pointer">
+                                Batal
                             </button>
                         </div>
+                    </form>
+                </div>
 
-                        <div class="overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-xs">
-                            <table class="w-full text-left border-collapse text-[11px]">
-                                <thead>
-                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold tracking-wide">
-                                        <th class="px-4 py-2.5">Nama Siswa</th>
-                                        <th class="px-4 py-2.5">Kelas</th>
-                                        <th class="px-4 py-2.5 text-center">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabelMonitorAbsenBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
-                                    <tr>
-                                        <td colspan="3" class="px-4 py-5 text-center text-slate-400 italic">Menunggu siswa memindai QR...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="lg:col-span-7 bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] space-y-4">
+                    <h4 class="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock-rotate-left text-slate-400"></i> Riwayat Agenda Saya
+                    </h4>
+                    <div class="overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-xs">
+                        <table class="w-full text-left border-collapse text-[11px]">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold tracking-wide">
+                                    <th class="px-4 py-3">Kelas & Materi</th>
+                                    <th class="px-4 py-3 text-center w-24">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelAgendaLokalBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                                <tr>
+                                    <td colspan="2" class="px-4 py-8 text-center text-slate-400 italic">Belum ada agenda terpilih.</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
+            </div>
+        </section>
+
+        <section id="page-presensi" class="halaman-panel hidden relative z-10">
+            <div class="grid grid-columns-1 lg:grid-columns-12 gap-6 items-start">
+                
+                <div class="lg:col-span-5 bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] space-y-5">
+                    <div>
+                        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-qrcode text-sky-500"></i> Rilis Sesi Absensi Siswa
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Pilih kelas untuk memunculkan QR-Code absensi siswa.</p>
+                    </div>
+
+                    <form id="formBukaPresensi" class="space-y-4">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Pilih Sesi Kelas Mengajar</label>
+                            <select id="presensiJadwalPilihan" required class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner">
+                                <option value="">-- Pilih Jadwal Kelas Anda --</option>
+                            </select>
+                        </div>
+                        
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Keterangan / Topik Presensi Singkat</label>
+                            <input type="text" id="presensiMateriRingkas" required class="w-full px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder-slate-400 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner" placeholder="Contoh: Pertemuan Ke-3 / UTS Ganjil">
+                        </div>
+
+                        <button type="submit" id="btnSimpanPresensi" class="w-full mt-2 relative overflow-hidden group/btn bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(14,165,233,0.3)] hover:shadow-[0_4px_20px_rgba(14,165,233,0.45)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer text-xs tracking-wide">
+                            <span class="absolute inset-0 w-full h-full bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></span>
+                            <i class="fa-solid fa-qrcode mr-1.5"></i> Buat & Generate QR-Code
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-7 bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]">
+                    
+                    <div id="boxQrTampil" class="hidden text-center space-y-4">
+                        <p class="text-xs font-bold text-emerald-600 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-circle-check text-sm"></i> Sesi Kelas Berhasil Dibuka!
+                        </p>
+                        <div class="inline-block p-4 bg-white border border-slate-200 rounded-3xl shadow-md mx-auto transition-transform duration-500 hover:scale-[1.02]">
+                            <div id="canvasQrArea" class="w-48 h-48 bg-slate-50 flex items-center justify-center text-[10px] text-slate-400 rounded-2xl overflow-hidden">QR CODE</div>
+                        </div>
+                        <p class="text-[11px] text-slate-500 px-6 font-medium leading-relaxed">
+                            Siswa sekarang dapat melakukan pemindaian barcode ini langsung dari layar ponsel Anda.
+                        </p>
+                        
+                        <hr class="border-slate-150 my-2">
+
+                        <div class="text-left space-y-3">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-xs font-black text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
+                                    <i class="fa-solid fa-users-viewfinder"></i> Monitor Kehadiran Kelas
+                                </h4>
+                                <button onclick="muatMonitorKehadiranSiswa()" class="text-[10px] font-bold bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer shadow-xs">
+                                    <i class="fa-solid fa-rotate text-[9px]"></i> Refresh
+                                </button>
+                            </div>
+
+                            <div class="overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-xs">
+                                <table class="w-full text-left border-collapse text-[11px]">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold tracking-wide">
+                                            <th class="px-4 py-2.5">Nama Siswa</th>
+                                            <th class="px-4 py-2.5">Kelas</th>
+                                            <th class="px-4 py-2.5 text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabelMonitorAbsenBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                                        <tr>
+                                            <td colspan="3" class="px-4 py-6 text-center text-slate-400 italic">Menunggu siswa memindai QR...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="placeholderQrKosong" class="py-16 text-center text-slate-400 italic text-xs space-y-2">
+                        <i class="fa-solid fa-qrcode text-4xl text-slate-300 block mb-2"></i>
+                        Silakan buat sesi kelas di kolom sebelah kiri untuk mengaktifkan kode monitor QR.
+                    </div>
+
+                </div>
+
             </div>
         </section>
 
     </main>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-eFOXPYKVMRguM0_Fwi43DrCmj9_fiL5UnuCfSray3hPPv_brk_sKwRWrqXYhYOEXeg/exec"; // PASTE URL WEB APP KAMU DI SINI
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMMkeWbxGPKeroIHlhsZ636OB5htdvNsSi98A0iz8Nxw4rCNjDkwz-1l9A1muZNTH7cg/exec"; 
         let userLogin = null;
         let listJadwalGuruGlobal = [];
         let idAgendaAktifGlobal = null; 
+        let listAgendaLokal = []; // Array data CRUD agenda
 
         window.onload = function() {
             const sessionData = sessionStorage.getItem('userLogin');
@@ -175,7 +268,13 @@
             }
 
             document.getElementById('namaGuruTop').innerText = userLogin.nama_lengkap;
+            
+            // Ambil data agenda lokal dari localStorage
+            const localSaved = localStorage.getItem('agenda_pkbm_' + userLogin.id_user);
+            if(localSaved) { listAgendaLokal = JSON.parse(localSaved); }
+            
             loadJadwalGuruServer();
+            muatTabelAgendaLokal();
         };
 
         function toggleSidebar(buka) {
@@ -202,10 +301,32 @@
             if (activeBtn) activeBtn.className = "menu-btn w-full bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 text-white font-bold flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm text-left shadow-md shadow-sky-500/15 cursor-pointer";
         }
 
-        async function loadJadwalGuruServer() {
-            const tbody = document.getElementById('tabelJadwalGuruBody');
-            const selectAgenda = document.getElementById('agendaJadwalPilihan');
+        /* Fungsi Filter Penanganan Bug Tanggal Malformed / 1899 */
+        function bersihkanWaktuMengajar(jamString) {
+            if (!jamString) return "Waktu Belum Diatur";
             
+            // Jika string mengandung indikator sistem tanggal lembar lajur bawaan lama (1899 atau 1900)
+            if (jamString.includes("1899") || jamString.includes("1900")) {
+                // Ekstrak token waktu HH:MM menggunakan regex
+                const pencocokanWaktu = jamString.match(/\d{2}:\d{2}/g);
+                if (pencocokanWaktu && pencocokanWaktu.length >= 2) {
+                    return `${pencocokanWaktu[0]} - ${pencocokanWaktu[1]}`;
+                } else if (pencocokanWaktu && pencocokanWaktu.length === 1) {
+                    return `${pencocokanWaktu[0]} WIB`;
+                }
+            }
+            return jamString; // Kembalikan string asli jika normal
+        }
+
+        async function loadJadwalGuruServer() {
+            const gridBody = document.getElementById('tabelJadwalGuruBody');
+            const selectAgenda = document.getElementById('agendaJadwalPilihan');
+            const selectPresensi = document.getElementById('presensiJadwalPilihan');
+            
+            gridBody.innerHTML = `<div class="col-span-full py-8 text-center text-slate-400 italic flex items-center justify-center gap-2">
+                <i class="fa-solid fa-spinner animate-spin text-sky-500"></i> Mengambil data penugasan...
+            </div>`;
+
             try {
                 const res = await fetch(WEB_APP_URL, {
                     method: 'POST',
@@ -215,45 +336,185 @@
                 
                 if (result.status === "success" && result.data.length > 0) {
                     listJadwalGuruGlobal = result.data;
-                    tbody.innerHTML = "";
+                    gridBody.innerHTML = "";
                     selectAgenda.innerHTML = `<option value="">-- Pilih Jadwal Kelas Anda --</option>`;
+                    selectPresensi.innerHTML = `<option value="">-- Pilih Jadwal Kelas Anda --</option>`;
                     
                     result.data.forEach(j => {
-                        // UPDATE TAMPILAN BARIS TABEL (Light Mode Bersih Kontras Tinggi)
-                        tbody.innerHTML += `
-                            <tr class="hover:bg-slate-50/70 transition-colors">
-                                <td class="px-4 py-3.5 font-bold text-slate-800">
-                                    ${j.mata_pelajaran}
-                                    <br>
-                                    <span class="inline-block mt-1 px-2.5 py-0.5 text-[9px] font-black tracking-wide uppercase bg-sky-50 text-sky-600 border border-sky-100 rounded-md shadow-xs">${j.kelas}</span>
-                                </td>
-                                <td class="px-4 py-3.5 text-center text-slate-600 font-bold align-middle leading-relaxed">
-                                    <span class="text-slate-800 font-extrabold">${j.hari}</span>
-                                    <br>
-                                    <span class="text-[10px] text-slate-400 font-semibold">${j.jam_mengajar}</span>
-                                </td>
-                            </tr>`;
+                        // Bersihkan jam mengajar dari bug penanggalan 1899 sebelum di-render ke kartu
+                        const jamBersih = bersihkanWaktuMengajar(j.jam_mengajar);
                         
-                        selectAgenda.innerHTML += `<option value="${j.id_jadwal}">${j.mata_pelajaran} - ${j.kelas} (${j.hari})</option>`;
+                        // Menentukan warna badge acak berbasis nama paket kelas agar estetis
+                        const warnaBadge = j.kelas.toLowerCase().includes('paket b') 
+                            ? 'bg-sky-50 text-sky-700 border-sky-100' 
+                            : 'bg-emerald-50 text-emerald-700 border-emerald-100';
+
+                        // Render layout berbentuk komponen Kartu Grid modern
+                        gridBody.innerHTML += `
+                            <div class="bg-white border border-slate-150 p-4 rounded-2xl shadow-xs flex justify-between items-center transition-all hover:border-sky-300 hover:shadow-md">
+                                <div class="space-y-1">
+                                    <h4 class="text-xs font-bold text-slate-800">${j.mata_pelajaran}</h4>
+                                    <span class="inline-block text-[10px] px-2 py-0.5 rounded-md font-bold border ${warnaBadge}">${j.kelas}</span>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs font-bold text-slate-700">${j.hari}</p>
+                                    <p class="text-[11px] text-slate-400 font-semibold tracking-tight">${jamBersih}</p>
+                                </div>
+                            </div>`;
+                        
+                        const optionTag = `<option value="${j.id_jadwal}">${j.mata_pelajaran} - ${j.kelas} (${j.hari})</option>`;
+                        selectAgenda.innerHTML += optionTag;
+                        selectPresensi.innerHTML += optionTag;
                     });
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="2" class="px-4 py-6 text-center text-slate-400 italic">Belum ada penugasan mengajar dari Admin.</td></tr>`;
+                    gridBody.innerHTML = `<div class="col-span-full py-8 text-center text-slate-400 italic">Belum ada penugasan mengajar dari Admin.</div>`;
                 }
             } catch (e) {
-                tbody.innerHTML = `<tr><td colspan="2" class="px-4 py-6 text-center text-rose-500 font-semibold">Gagal Sinkronisasi Jadwal.</td></tr>`;
+                gridBody.innerHTML = `<div class="col-span-full py-8 text-center text-rose-500 font-semibold">Gagal Sinkronisasi Jadwal. Silakan periksa koneksi internet Anda.</div>`;
             }
         }
 
-        document.getElementById('formBukaAgenda').addEventListener('submit', async function(e) {
+       document.getElementById('formAgendaLokal').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btnSimpan = document.getElementById('btnSimpanAgendaLokal'); // Sesuaikan dengan ID tombol simpan catatan agenda Anda
+    const idJadwal = document.getElementById('agendaJadwalPilihan').value;
+    const tipeSesi = document.getElementById('agendaTipeSesi').value;
+    const materi = document.getElementById('agendaMateri').value;
+    const catatan = document.getElementById('agendaCatatan').value;
+    const editId = document.getElementById('agendaEditId').value;
+
+    // Ambil detail mapel dan kelas dari objek jadwal yang sedang aktif dipilih guru
+    const detailJadwal = listJadwalGuruGlobal.find(x => x.id_jadwal === idJadwal) || { mata_pelajaran: '', kelas: '' };
+
+    // Tampilkan efek loading pada tombol
+    const textAsliTombol = btnSimpan.innerHTML;
+    btnSimpan.disabled = true;
+    btnSimpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyinkronkan ke Admin...`;
+
+    try {
+        // 🚀 KIRIM DATA PEMBARUAN AGENDA LANGSUNG KE BACKEND SERVER
+        const res = await fetch(WEB_APP_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'updateAgendaGuru',
+                id_guru: userLogin.id_user, // ID guru yang sedang login
+                kelas: detailJadwal.kelas,
+                mata_pelajaran: detailJadwal.mata_pelajaran,
+                materi: materi,
+                catatan: catatan
+            })
+        });
+        const result = await res.json();
+
+        if (result.status === "success") {
+            // JIKA SERVER BERHASIL TER-UPDATE, KITA SIMPAN KE LOCAL STORAGE SEBAGAI RIWAYAT CADANGAN GURU
+            if (editId) {
+                listAgendaLokal = listAgendaLokal.map(item => {
+                    if (item.id_internal === editId) {
+                        return { ...item, id_jadwal: idJadwal, mapel: detailJadwal.mata_pelajaran, kelas: detailJadwal.kelas, tipe_sesi: tipeSesi, materi: materi, catatan: catatan };
+                    }
+                    return item;
+                });
+                alert("Agenda mengajar berhasil diperbarui di server Admin & Riwayat!");
+            } else {
+                const agendaBaru = {
+                    id_internal: 'ID_' + Date.now(),
+                    id_jadwal: idJadwal,
+                    mapel: detailJadwal.mata_pelajaran,
+                    kelas: detailJadwal.kelas,
+                    tipe_sesi: tipeSesi,
+                    materi: materi,
+                    catatan: catatan,
+                    tanggal: new Date().toLocaleDateString('id-ID')
+                };
+                listAgendaLokal.unshift(agendaBaru);
+                alert("Agenda mengajar sukses terkirim dan tersimpan di server Admin!");
+            }
+
+            localStorage.setItem('agenda_pkbm_' + userLogin.id_user, JSON.stringify(listAgendaLokal));
+            resetFormAgenda();
+            muatTabelAgendaLokal();
+        } else {
+            // Jika gagal (misalnya karena guru belum membuat QR Code sesi mengajar di hari itu)
+            alert("Peringatan: " + result.message);
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("Gagal terhubung ke server. Periksa koneksi internet Anda.");
+    } finally {
+        btnSimpan.disabled = false;
+        btnSimpan.innerHTML = textAsliTombol;
+    }
+});
+
+        function muatTabelAgendaLokal() {
+            const tbody = document.getElementById('tabelAgendaLokalBody');
+            if(listAgendaLokal.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="2" class="px-4 py-8 text-center text-slate-400 italic">Belum ada riwayat agenda recorded.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = "";
+            listAgendaLokal.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/70 transition-colors">
+                        <td class="px-4 py-3 leading-relaxed">
+                            <span class="font-bold text-slate-800">${item.mapel} - ${item.kelas}</span> 
+                            <span class="text-[9px] px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded font-semibold">${item.tipe_sesi}</span>
+                            <br>
+                            <span class="text-slate-600 font-medium">Materi: ${item.materi}</span>
+                            ${item.catatan ? `<br><span class="text-[10px] text-slate-400 italic">Note: ${item.catatan}</span>` : ''}
+                        </td>
+                        <td class="px-4 py-3 text-center align-middle space-x-1 whitespace-nowrap">
+                            <button onclick="editAgendaLokal('${item.id_internal}')" class="text-sky-600 hover:bg-sky-50 px-2 py-1 rounded-md border border-sky-200 transition-colors cursor-pointer" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="hapusAgendaLokal('${item.id_internal}')" class="text-rose-600 hover:bg-rose-50 px-2 py-1 rounded-md border border-rose-200 transition-colors cursor-pointer" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function editAgendaLokal(idInternal) {
+            const item = listAgendaLokal.find(x => x.id_internal === idInternal);
+            if(!item) return;
+
+            document.getElementById('agendaEditId').value = item.id_internal;
+            document.getElementById('agendaJadwalPilihan').value = item.id_jadwal;
+            document.getElementById('agendaTipeSesi').value = item.tipe_sesi;
+            document.getElementById('agendaMateri').value = item.materi;
+            document.getElementById('agendaCatatan').value = item.catatan;
+
+            document.getElementById('btnSimpanAgendaLokal').innerHTML = `<i class="fa-solid fa-pen-to-square mr-1"></i> Perbarui Catatan Agenda`;
+            document.getElementById('btnBatalEditAgenda').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hapusAgendaLokal(idInternal) {
+            if(confirm("Apakah Anda yakin ingin menghapus catatan agenda ini?")) {
+                listAgendaLokal = listAgendaLokal.filter(x => x.id_internal !== idInternal);
+                localStorage.setItem('agenda_pkbm_' + userLogin.id_user, JSON.stringify(listAgendaLokal));
+                muatTabelAgendaLokal();
+                resetFormAgenda();
+            }
+        }
+
+        function resetFormAgenda() {
+            document.getElementById('agendaEditId').value = "";
+            document.getElementById('formAgendaLokal').reset();
+            document.getElementById('btnSimpanAgendaLokal').innerHTML = `<i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Catatan Agenda`;
+            document.getElementById('btnBatalEditAgenda').classList.add('hidden');
+        }
+
+
+        /* ================= LOGIK PRESENSI & QR SERVER ================= */
+        document.getElementById('formBukaPresensi').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnSimpanAgenda');
-            const idJadwalTerpilih = document.getElementById('agendaJadwalPilihan').value;
-            const materiInput = document.getElementById('agendaMateri').value;
-            const catatanInput = document.getElementById('agendaCatatan').value;
-            const tipeSesiInput = document.getElementById('agendaTipeSesi').value;
+            const btn = document.getElementById('btnSimpanPresensi');
+            const idJadwalTerpilih = document.getElementById('presensiJadwalPilihan').value;
+            const keterangan = document.getElementById('presensiMateriRingkas').value;
 
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Memproses Sesi...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Menghubungkan ke Server...`;
 
             const detailJadwal = listJadwalGuruGlobal.find(x => x.id_jadwal === idJadwalTerpilih);
 
@@ -267,17 +528,19 @@
                         nama_guru: userLogin.nama_lengkap,
                         mata_pelajaran: detailJadwal.mata_pelajaran,
                         kelas: detailJadwal.kelas, 
-                        materi: materiInput,
-                        catatan: catatanInput,
-                        tipe_sesi: tipeSesiInput 
+                        materi: keterangan,
+                        catatan: "Sesi dibuka terpisah via menu presensi.",
+                        tipe_sesi: "KBM Biasa" 
                     })
                 });
                 const result = await res.json();
 
                 if (result.status === "success") {
-                    alert("Sesi presensi " + tipeSesiInput + " berhasil dibuka!");
+                    alert("Sesi presensi online berhasil diaktifkan!");
                     idAgendaAktifGlobal = result.id_agenda; 
                     
+                    // Sembunyikan placeholder kosong, tampilkan panel monitor utama
+                    document.getElementById('placeholderQrKosong').classList.add('hidden');
                     document.getElementById('boxQrTampil').classList.remove('hidden');
                     
                     const qrTextString = result.id_agenda; 
@@ -290,10 +553,10 @@
                     alert(result.message);
                 }
             } catch(err) {
-                alert("Terjadi gangguan koneksi ke database.");
+                alert("Terjadi gangguan koneksi ke database PKBM.");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-qrcode mr-1.5"></i> Simpan & Generate QR-Code`;
+                btn.innerHTML = `<i class="fa-solid fa-qrcode mr-1.5"></i> Buat & Generate QR-Code`;
             }
         });
 
@@ -321,7 +584,6 @@
                 if (result.status === "success" && result.data.length > 0) {
                     monitorBody.innerHTML = "";
                     result.data.forEach(s => {
-                        // UPDATE TAMPILAN BADGE SISWA (Light Mode Kontras Tinggi)
                         const badgeStatus = s.status === "HADIR" 
                             ? `<span class="px-2.5 py-0.5 font-black bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-md text-[9px] tracking-wide"><i class="fa-solid fa-check text-[8px]"></i> HADIR</span>`
                             : `<span class="px-2.5 py-0.5 font-black bg-slate-50 text-slate-400 border border-slate-200 rounded-md text-[9px] tracking-wide">BELUM ABSEN</span>`;
