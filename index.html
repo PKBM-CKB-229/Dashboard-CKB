@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - PKBM Cahaya Kahuripan</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50/40 to-slate-100 min-h-screen antialiased font-sans flex items-center justify-center p-4 relative overflow-x-hidden">
+
+    <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-gradient-to-tr from-sky-400/10 to-cyan-400/10 blur-3xl rounded-full pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-400/10 to-teal-400/10 blur-3xl rounded-full pointer-events-none"></div>
+
+    <div class="w-full max-w-md bg-white/95 backdrop-blur-xl border border-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.06)] relative z-10 transition-all duration-300 hover:shadow-[0_30px_60px_-10px_rgba(14,165,233,0.1)]">
+        
+        <div class="flex flex-col items-center text-center space-y-4 mb-8">
+            <div class="w-16 h-16 bg-white border border-slate-150 rounded-2xl flex items-center justify-center p-2.5 shadow-md shadow-slate-100/50">
+                <img src="img-logo-pkbm.png" alt="Logo PKBM" class="w-full h-full object-contain">
+            </div>
+            <div class="space-y-1">
+                <h1 class="text-xl font-black text-slate-800 tracking-tight">
+                    PKBM Cahaya <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-500 to-blue-600">Kahuripan</span>
+                </h1>
+                <p class="text-xs text-slate-400 font-medium">Silakan masuk menggunakan akun resmi Anda</p>
+            </div>
+        </div>
+
+        <form id="formLogin" class="space-y-5">
+            <div class="space-y-1.5">
+                <label for="username" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Username / NISN</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                        <i class="fa-solid fa-user text-sm"></i>
+                    </div>
+                    <input type="text" id="username" required autocomplete="username"
+                        class="w-full pl-11 pr-4 py-3.5 bg-slate-50/80 border border-slate-200/80 rounded-2xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner" 
+                        placeholder="Masukkan username atau NISN">
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="password" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">KATA SANDI</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                        <i class="fa-solid fa-lock text-sm"></i>
+                    </div>
+                    <input type="password" id="password" required autocomplete="current-password"
+                        class="w-full pl-11 pr-12 py-3.5 bg-slate-50/80 border border-slate-200/80 rounded-2xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner" 
+                        placeholder="••••••••">
+                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer transition-colors focus:outline-none">
+                        <i id="eyeIcon" class="fa-solid fa-eye text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" id="btnLogin" class="w-full mt-2 relative overflow-hidden group/btn bg-gradient-to-r from-sky-500 via-sky-600 to-emerald-500 text-white font-bold py-3.5 rounded-2xl transition-all duration-300 shadow-[0_4px_20px_rgba(14,165,233,0.25)] hover:shadow-[0_4px_25px_rgba(14,165,233,0.4)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer text-xs tracking-wide flex items-center justify-center gap-2">
+                <span class="absolute inset-0 w-full h-full bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></span>
+                <i class="fa-solid fa-right-to-bracket text-[11px] transition-transform group-hover/btn:translate-x-0.5"></i> Autentikasi Akun
+            </button>
+        </form>
+
+        <div class="mt-8 text-center border-t border-slate-100 pt-5">
+            <p class="text-xs text-slate-400 font-medium">
+                Warga belajar baru? <a href="#" onclick="alert('Pendaftaran online mandiri sedang ditutup. Silakan datang langsung ke sekretariat PKBM.')" class="font-bold text-sky-600 hover:text-sky-700 transition-colors underline decoration-sky-500/30 underline-offset-2">Daftar Akun Di Sini</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-eFOXPYKVMRguM0_Fwi43DrCmj9_fiL5UnuCfSray3hPPv_brk_sKwRWrqXYhYOEXeg/exec";
+
+        // FUNCTION TOGGLE SECURITY PASSWORD VISIBILITY
+        document.addEventListener("DOMContentLoaded", function () {
+            const passwordInput = document.getElementById("password");
+            const togglePassword = document.getElementById("togglePassword");
+            const eyeIcon = document.getElementById("eyeIcon");
+
+            if (togglePassword && passwordInput && eyeIcon) {
+                togglePassword.addEventListener("click", function () {
+                    const isPassword = passwordInput.getAttribute("type") === "password";
+                    passwordInput.setAttribute("type", isPassword ? "text" : "password");
+                    
+                    if (isPassword) {
+                        eyeIcon.classList.remove("fa-eye");
+                        eyeIcon.classList.add("fa-eye-slash");
+                    } else {
+                        eyeIcon.classList.remove("fa-eye-slash");
+                        eyeIcon.classList.add("fa-eye");
+                    }
+                });
+            }
+        });
+
+        // AJAX LIVE SUBMIT ACTION LOGIN
+        document.getElementById('formLogin').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnLogin');
+            btn.disabled = true; 
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Memeriksa...`;
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'login',
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value
+                    })
+                });
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    sessionStorage.setItem('userLogin', JSON.stringify(result.user));
+                    if (result.user.role === "admin") window.location.href = "dashboard-admin.html";
+                    else if (result.user.role === "guru") window.location.href = "dashboard-guru.html";
+                    else if (result.user.role === "siswa") window.location.href = "dashboard-siswa.html";
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) { 
+                alert("Gagal terhubung dengan server database."); 
+            } finally { 
+                btn.disabled = false; 
+                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket mr-1.5"></i> Autentikasi Akun`; 
+            }
+        });
+    </script>
+</body>
+</html>
