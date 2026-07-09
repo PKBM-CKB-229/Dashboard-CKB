@@ -58,6 +58,12 @@
                 </div>
                 Pengajuan Keringanan
             </button>
+            <button onclick="gantiMenu('kelola-pengguna', this)" class="menu-btn w-full text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 text-sm cursor-pointer text-left group">
+                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center transition-colors group-hover:bg-slate-200">
+                    <i class="fa-solid fa-users-gear text-sm text-slate-400 group-hover:text-slate-600"></i>
+                </div>
+                Kelola Pengguna
+            </button>
         </nav>
 
         <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex items-center gap-3">
@@ -324,6 +330,78 @@
                 </div>
             </div>
 
+            <div id="panel-kelola-pengguna" class="menu-panel hidden max-w-5xl">
+                <div class="grid md:grid-cols-2 gap-6 items-start">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs space-y-5">
+                        <div class="border-b border-slate-100 pb-4">
+                            <h3 class="font-bold text-slate-900 text-base">Daftarkan Akun Baru</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Admin bisa langsung membuat akun untuk Siswa maupun Guru di sini.</p>
+                        </div>
+                        <form id="formRegisterAkunAdmin" class="space-y-4">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Peran / Role</label>
+                                <div class="flex gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+                                    <button type="button" id="btnRoleSiswa" onclick="pilihRoleRegister('siswa')" class="flex-1 text-xs font-bold py-2 rounded-lg transition cursor-pointer bg-white text-emerald-700 shadow-xs">
+                                        <i class="fa-solid fa-user-graduate mr-1"></i> Siswa
+                                    </button>
+                                    <button type="button" id="btnRoleGuru" onclick="pilihRoleRegister('guru')" class="flex-1 text-xs font-bold py-2 rounded-lg transition cursor-pointer text-slate-500">
+                                        <i class="fa-solid fa-chalkboard-user mr-1"></i> Guru
+                                    </button>
+                                </div>
+                                <input type="hidden" id="roleRegisterAkun" value="siswa">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+                                <input type="text" id="namaRegisterAkun" required class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition" placeholder="Contoh: Budi Utomo, S.Pd.">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Username / NISN</label>
+                                <input type="text" id="usernameRegisterAkun" required class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition" placeholder="Contoh: S010 atau G010">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
+                                <input type="text" id="passwordRegisterAkun" required class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition" placeholder="Buat password awal">
+                            </div>
+                            <div id="wrapperKelasRegisterAkun">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Kelas (khusus Siswa)</label>
+                                <input type="text" id="kelasRegisterAkun" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition" placeholder="Contoh: B Wangunharja">
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" id="btnSimpanRegisterAkun" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl transition shadow-xs cursor-pointer text-sm flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-user-plus text-xs"></i> Daftarkan Akun
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm">Daftar Akun Pengguna</h3>
+                                <p class="text-[11px] text-slate-400 font-medium mt-0.5">Seluruh akun Siswa & Guru yang terdaftar di sistem</p>
+                            </div>
+                            <button onclick="muatDaftarUserAdmin()" class="inline-flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shadow-xs">
+                                <i class="fa-solid fa-rotate text-[10px]"></i> Segarkan
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto max-h-[520px] overflow-y-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="sticky top-0">
+                                    <tr class="bg-slate-50 border-b border-slate-100 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
+                                        <th class="px-4 py-3">Nama</th>
+                                        <th class="px-4 py-3">Username</th>
+                                        <th class="px-4 py-3">Role</th>
+                                        <th class="px-4 py-3">Kelas</th>
+                                        <th class="px-4 py-3">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelUserAdminBody" class="text-sm divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -439,6 +517,9 @@
             } else if (targetPanel === 'keringanan') {
                 judulHalamanEl.innerText = "Verifikasi Pengajuan Keringanan";
                 muatDataKeringanan();
+            } else if (targetPanel === 'kelola-pengguna') {
+                judulHalamanEl.innerText = "Kelola Pengguna (Siswa & Guru)";
+                muatDaftarUserAdmin();
             }
         }
 
@@ -681,6 +762,128 @@
             return m ? `${m[1]}:${m[2]}` : fallback;
         }
         return str; // Sudah dalam format bersih (mis. "08:00")
+    }
+
+    // ===================================================================
+    // 👤 FITUR KELOLA PENGGUNA (Daftarkan & lihat akun Siswa/Guru)
+    // ===================================================================
+    function pilihRoleRegister(role) {
+        document.getElementById('roleRegisterAkun').value = role;
+        const btnSiswa = document.getElementById('btnRoleSiswa');
+        const btnGuru = document.getElementById('btnRoleGuru');
+        const wrapperKelas = document.getElementById('wrapperKelasRegisterAkun');
+
+        if (role === 'siswa') {
+            btnSiswa.classList.add('bg-white', 'text-emerald-700', 'shadow-xs');
+            btnSiswa.classList.remove('text-slate-500');
+            btnGuru.classList.remove('bg-white', 'text-emerald-700', 'shadow-xs');
+            btnGuru.classList.add('text-slate-500');
+            wrapperKelas.classList.remove('hidden');
+        } else {
+            btnGuru.classList.add('bg-white', 'text-emerald-700', 'shadow-xs');
+            btnGuru.classList.remove('text-slate-500');
+            btnSiswa.classList.remove('bg-white', 'text-emerald-700', 'shadow-xs');
+            btnSiswa.classList.add('text-slate-500');
+            wrapperKelas.classList.add('hidden');
+        }
+    }
+
+    async function muatDaftarUserAdmin() {
+        const tbody = document.getElementById('tabelUserAdminBody');
+        if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Memuat...</td></tr>`;
+
+        try {
+            const resp = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'getSemuaUserAdmin' })
+            });
+            const hasil = await resp.json();
+            if (hasil.status !== 'success') {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-rose-500 font-semibold">Gagal memuat: ${hasil.message || ''}</td></tr>`;
+                return;
+            }
+            const daftarUser = hasil.data || [];
+            if (daftarUser.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400 italic">Belum ada pengguna terdaftar.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = daftarUser.map(u => `
+                <tr>
+                    <td class="px-4 py-3 font-semibold text-slate-700">${u.nama_lengkap || '-'}</td>
+                    <td class="px-4 py-3 font-mono text-xs text-slate-500">${u.username || '-'}</td>
+                    <td class="px-4 py-3">
+                        <span class="text-[10px] font-bold uppercase px-2 py-1 rounded-full ${u.role === 'guru' ? 'bg-sky-50 text-sky-700' : (u.role === 'admin' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700')}">${u.role || '-'}</span>
+                    </td>
+                    <td class="px-4 py-3 text-slate-500">${u.kelas || '-'}</td>
+                    <td class="px-4 py-3">
+                        ${u.role === 'admin' ? '<span class="text-slate-300 text-xs">-</span>' : `<button onclick="hapusUserAdminAksi('${u.id_user}', '${String(u.nama_lengkap || '').replace(/'/g, "\\'")}')" class="text-rose-500 hover:bg-rose-50 p-1.5 rounded-md transition cursor-pointer" title="Hapus Akun"><i class="fa-solid fa-trash text-xs"></i></button>`}
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error(error);
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-rose-500 font-semibold">Gagal memuat data dari server.</td></tr>`;
+        }
+    }
+
+    async function hapusUserAdminAksi(idUser, namaUser) {
+        if (!confirm(`Yakin ingin menghapus akun "${namaUser}"? Tindakan ini tidak bisa dibatalkan.`)) return;
+        try {
+            const resp = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'hapusUserAdmin', id_user: idUser })
+            });
+            const hasil = await resp.json();
+            if (hasil.status === 'success') {
+                tampilkanNotifikasi("Akun berhasil dihapus.", "success");
+                muatDaftarUserAdmin();
+            } else {
+                tampilkanNotifikasi("Gagal menghapus: " + (hasil.message || ''), "error");
+            }
+        } catch (error) {
+            tampilkanNotifikasi("Terjadi kesalahan koneksi database.", "error");
+        }
+    }
+
+    const formRegisterAkunAdmin = document.getElementById('formRegisterAkunAdmin');
+    if (formRegisterAkunAdmin) {
+        formRegisterAkunAdmin.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSimpanRegisterAkun');
+            const teksAsli = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xs"></i> Menyimpan...`;
+
+            try {
+                const resp = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'registerAkunAdmin',
+                        role: document.getElementById('roleRegisterAkun').value,
+                        nama_lengkap: document.getElementById('namaRegisterAkun').value.trim(),
+                        username: document.getElementById('usernameRegisterAkun').value.trim(),
+                        password: document.getElementById('passwordRegisterAkun').value,
+                        kelas: document.getElementById('kelasRegisterAkun').value.trim()
+                    })
+                });
+                const hasil = await resp.json();
+                if (hasil.status === 'success') {
+                    tampilkanNotifikasi(hasil.message, "success");
+                    formRegisterAkunAdmin.reset();
+                    pilihRoleRegister('siswa');
+                    muatDaftarUserAdmin();
+                } else {
+                    tampilkanNotifikasi(hasil.message || "Gagal mendaftarkan akun.", "error");
+                }
+            } catch (error) {
+                console.error(error);
+                tampilkanNotifikasi("Terjadi kesalahan koneksi database.", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = teksAsli;
+            }
+        });
     }
 
     // 3. FUNGSI AMBIL DATA REKAP ABSENSI SISWA
@@ -1466,7 +1669,7 @@ function formatWaktuLengkapJurnal(tanggalMentah, keteranganMentah) {
         <div id="areaCetakDokumen" class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-8 border border-slate-100 my-auto text-black">
             
             <div class="flex items-center gap-4 border-b-[4px] border-double border-black pb-3 mb-6">
-                <img src="logo-dinas-kab-bandung-barat.jpeg" class="w-20 h-20 object-contain shrink-0">
+                <img src="logo-dinas-kab-bandung-barat.jpg" class="w-20 h-20 object-contain shrink-0">
                 <div class="flex-1 text-center">
                     <h3 class="text-[13px] font-bold tracking-wide uppercase m-0 text-black leading-tight">Dinas Pendidikan Kabupaten Bandung Barat</h3>
                     <h2 class="text-[13px] font-bold uppercase m-0 text-black leading-tight">Pusat Kegiatan Belajar Masyarakat (PKBM)</h2>
@@ -1537,7 +1740,7 @@ function formatWaktuLengkapJurnal(tanggalMentah, keteranganMentah) {
         <div id="areaCetakJadwalDokumen" class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-8 border border-slate-100 my-auto text-black">
 
             <div class="flex items-center gap-4 border-b-[4px] border-double border-black pb-3 mb-6">
-                <img src="logo-dinas-kab-bandung-barat.jpeg" class="w-20 h-20 object-contain shrink-0">
+                <img src="logo-dinas-kab-bandung-barat.jpg" class="w-20 h-20 object-contain shrink-0">
                 <div class="flex-1 text-center">
                     <h3 class="text-[13px] font-bold tracking-wide uppercase m-0 text-black leading-tight">Dinas Pendidikan Kabupaten Bandung Barat</h3>
                     <h2 class="text-[13px] font-bold uppercase m-0 text-black leading-tight">Pusat Kegiatan Belajar Masyarakat (PKBM)</h2>
