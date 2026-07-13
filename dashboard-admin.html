@@ -466,7 +466,7 @@
     window.onload = function() {
         const sessionData = sessionStorage.getItem('userLogin');
         if (!sessionData) { 
-            window.location.href = "index.html"; 
+            window.location.href = "index.html#login"; 
             return; 
         }
         
@@ -475,7 +475,7 @@
         // Proteksi Halaman Admin
         if (!userLogin || userLogin.role !== "admin") {
             alert("Akses ditolak! Halaman ini khusus untuk Pengawas/Admin.");
-            window.location.href = "index.html"; 
+            window.location.href = "index.html#login"; 
             return;
         }
         
@@ -813,7 +813,7 @@
                     <td class="px-4 py-3 font-semibold text-slate-700">${u.nama_lengkap || '-'}</td>
                     <td class="px-4 py-3 font-mono text-xs text-slate-500">${u.username || '-'}</td>
                     <td class="px-4 py-3">
-                        <span class="text-[10px] font-bold uppercase px-2 py-1 rounded-full ${u.role === 'guru' ? 'bg-sky-50 text-sky-700' : (u.role === 'admin' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700')}">${u.role || '-'}</span>
+                        <span class="text-[10px] font-bold uppercase px-2 py-1 rounded-full ${u.role === 'guru' ? 'bg-teal-50 text-teal-700' : (u.role === 'admin' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700')}">${u.role || '-'}</span>
                     </td>
                     <td class="px-4 py-3 text-slate-500">${u.kelas || '-'}</td>
                     <td class="px-4 py-3">
@@ -1464,11 +1464,19 @@
     }
 
     // 9. LOGOUT SISTEM
-    function logout() { 
-        if (confirm("Apakah Anda yakin ingin keluar dari Panel Pengawas?")) {
-            sessionStorage.clear(); 
-            window.location.href = "index.html"; 
-        }
+    function logout() {
+        const modal = document.getElementById('modalKonfirmasiLogout');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function batalKonfirmasiLogout() {
+        const modal = document.getElementById('modalKonfirmasiLogout');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function eksekusiLogout() {
+        sessionStorage.clear();
+        window.location.href = "index.html#login";
     }
     //10. PDF 
     // =========================================================================
@@ -1943,6 +1951,27 @@ function formatWaktuLengkapJurnal(tanggalMentah, keteranganMentah) {
             background-color: #fff !important;
             color: #000 !important;
         }
+    }
+    </style>
+
+    <!-- ===== MODAL KONFIRMASI LOGOUT (di tengah layar) ===== -->
+    <div id="modalKonfirmasiLogout" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-[999] p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-7 text-center animate-[fadeInScale_0.2s_ease-out]">
+            <div class="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center mx-auto mb-5">
+                <i class="fa-solid fa-right-from-bracket text-rose-500 text-xl"></i>
+            </div>
+            <h3 class="text-base font-black text-slate-800 mb-1.5">Konfirmasi Keluar</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-6">Apakah Anda yakin ingin keluar dari Panel Pengawas? Anda perlu masuk kembali untuk melanjutkan pengawasan.</p>
+            <div class="flex items-center gap-3">
+                <button onclick="batalKonfirmasiLogout()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-all text-xs cursor-pointer">Batal</button>
+                <button onclick="eksekusiLogout()" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl transition-all text-xs cursor-pointer shadow-md shadow-rose-500/20">Ya, Keluar</button>
+            </div>
+        </div>
+    </div>
+    <style>
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.94) translateY(6px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
     }
     </style>
 </body>

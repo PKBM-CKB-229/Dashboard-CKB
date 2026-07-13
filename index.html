@@ -1,103 +1,608 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - PKBM Cahaya Kahuripan</title>
+    <title>PKBM Cahaya Kahuripan Bangsa</title>
     <link rel="icon" type="image/png" href="img-logo-pkbm.png">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #14312d;
+            --teal-deep: #0c3f40;
+            --teal: #0f7a6a;
+            --emerald: #22a06b;
+            --line: #e6ebe9;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
+        input:-webkit-autofill { -webkit-box-shadow: 0 0 0 40px #ffffff inset; -webkit-text-fill-color: var(--ink); }
+
+        .hero-panel {
+            background:
+                linear-gradient(180deg, rgba(10,46,48,0.55), rgba(10,46,48,0.82)),
+                radial-gradient(circle at 15% 20%, rgba(255,255,255,0.10), transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(34,160,107,0.25), transparent 50%),
+                url("foto(2).png");
+            background-size: cover;
+            background-position: center;
+        }
+        .hero-panel svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.25; }
+
+        .about-panel {
+            background:
+                radial-gradient(circle at 75% 25%, rgba(34,160,107,0.16), transparent 50%),
+                linear-gradient(150deg, #0c3f40 0%, #14625c 100%);
+        }
+        .about-panel svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.3; }
+
+        .photo-panel {
+            background:
+                linear-gradient(200deg, rgba(10,46,48,0.55), rgba(10,46,48,0.85)),
+                radial-gradient(circle at 20% 15%, rgba(255,255,255,0.10), transparent 45%),
+                radial-gradient(circle at 80% 75%, rgba(34,160,107,0.18), transparent 50%),
+                url("foto(1).png");
+            background-size: cover;
+            background-position: center;
+        }
+        .photo-panel svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; }
+
+        /* ---------- view switching ---------- */
+        .app-view { display: none; opacity: 0; transition: opacity 0.28s ease; }
+        .app-view.is-active { display: block; }
+        .app-view.is-visible { opacity: 1; }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-blue-50/40 to-slate-100 min-h-screen antialiased font-sans flex items-center justify-center p-4 relative overflow-x-hidden">
+<body class="min-h-screen bg-white antialiased">
 
-    <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-gradient-to-tr from-sky-400/10 to-cyan-400/10 blur-3xl rounded-full pointer-events-none"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-400/10 to-teal-400/10 blur-3xl rounded-full pointer-events-none"></div>
+    <!-- =========================================================== -->
+    <!-- VIEW 1: LANDING / BERANDA                                    -->
+    <!-- =========================================================== -->
+    <div id="view-landing" class="app-view">
 
-    <div class="w-full max-w-md bg-white/95 backdrop-blur-xl border border-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.06)] relative z-10 transition-all duration-300 hover:shadow-[0_30px_60px_-10px_rgba(14,165,233,0.1)]">
-        
-        <div class="flex flex-col items-center text-center space-y-4 mb-8">
-            <div class="w-16 h-16 bg-white border border-slate-150 rounded-2xl flex items-center justify-center p-2.5 shadow-md shadow-slate-100/50">
-                <img src="img-logo-pkbm.png" alt="Logo PKBM" class="w-full h-full object-contain">
+        <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100">
+            <div class="max-w-6xl mx-auto px-5 sm:px-8 h-[68px] flex items-center justify-between">
+                <a href="#beranda" data-view="landing" class="nav-link flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0 p-1 ring-1 ring-slate-100 overflow-hidden">
+                        <img src="img-logo-pkbm.png" alt="Logo PKBM" class="w-full h-full object-contain">
+                    </div>
+                    <span class="text-[15.5px] font-extrabold text-[var(--teal-deep)] tracking-tight">Cahaya Kahuripan</span>
+                </a>
+
+                <nav class="hidden md:flex items-center gap-8 text-[13.5px] font-semibold text-slate-500">
+                    <a href="#beranda" class="text-[var(--teal-deep)]">Beranda</a>
+                    <a href="#tentang" class="hover:text-[var(--teal-deep)] transition-colors">Tentang</a>
+                    <a href="#program" class="hover:text-[var(--teal-deep)] transition-colors">Program</a>
+                    <a href="#kontak" class="hover:text-[var(--teal-deep)] transition-colors">Kontak</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <a href="#login" data-view="login" class="nav-link hidden sm:inline text-[13.5px] font-bold text-slate-600 hover:text-[var(--teal-deep)] transition-colors">Masuk</a>
+                    <a href="#register" data-view="register" class="nav-link text-[13px] font-bold text-white bg-[var(--teal-deep)] px-4 py-2.5 rounded-xl hover:bg-[var(--teal)] transition-colors shadow-sm">Daftar Sekarang</a>
+                </div>
             </div>
-            <div class="space-y-1">
-                <h1 class="text-xl font-black text-slate-800 tracking-tight">
-                    PKBM Cahaya <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-500 to-blue-600">Kahuripan</span>
+        </header>
+
+        <section id="beranda" class="relative hero-panel pt-16 pb-28 sm:pb-32 px-5 sm:px-8 overflow-hidden">
+            <svg viewBox="0 0 1200 500" preserveAspectRatio="none">
+                <path d="M120 500 L120 220 Q120 170 175 170 L260 170 Q315 170 315 220 L315 500" stroke="#ffffff" stroke-width="1.4" fill="none"/>
+                <path d="M420 500 L420 120 Q420 60 495 60 L580 60 Q655 60 655 120 L655 500" stroke="#ffffff" stroke-width="1.4" fill="none"/>
+                <path d="M780 500 L780 250 Q780 200 835 200 L900 200 Q955 200 955 250 L955 500" stroke="#ffffff" stroke-width="1" fill="none" opacity="0.6"/>
+            </svg>
+
+            <div class="relative z-10 max-w-3xl mx-auto text-center pt-6">
+                <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-[#5fd6b0] mb-4">Portal Akademik PKBM Cahaya Kahuripan Bangsa</p>
+                <h1 class="text-[32px] sm:text-[46px] font-extrabold text-white leading-[1.12] tracking-tight mb-5">
+                    Membangun Masa Depan Melalui<br class="hidden sm:block"> Pendidikan Kesetaraan yang Inklusif
                 </h1>
-                <p class="text-xs text-slate-400 font-medium">Silakan masuk menggunakan akun resmi Anda</p>
+                <p class="text-[14.5px] sm:text-[15.5px] text-white/70 leading-relaxed max-w-xl mx-auto mb-9">
+                    PKBM Cahaya Kahuripan Bangsa hadir sebagai mitra pendidikan terpercaya di Lembang, menyelenggarakan program kesetaraan Paket A, B, dan C yang terstruktur dan diakui secara nasional.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                    <a href="#register" data-view="register" class="nav-link w-full sm:w-auto text-[13.5px] font-bold text-[var(--teal-deep)] bg-white px-7 py-3.5 rounded-xl hover:bg-slate-100 transition-colors shadow-lg">Daftar Sekarang</a>
+                    <a href="#program" class="w-full sm:w-auto text-[13.5px] font-bold text-white border border-white/30 px-7 py-3.5 rounded-xl hover:bg-white/10 transition-colors">Pelajari Program</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="relative z-20 max-w-5xl mx-auto px-5 sm:px-8 -mt-16 sm:-mt-14">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+                <div class="bg-white rounded-2xl shadow-[0_15px_35px_-15px_rgba(12,63,64,0.25)] border border-slate-100 px-5 py-5">
+                    <i class="fa-solid fa-users text-[var(--teal)] text-[17px] mb-3"></i>
+                    <p class="text-[20px] font-extrabold text-[var(--teal-deep)] leading-none">500+</p>
+                    <p class="text-[11.5px] text-slate-400 font-semibold mt-1.5">Warga Belajar Aktif</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-[0_15px_35px_-15px_rgba(12,63,64,0.25)] border border-slate-100 px-5 py-5">
+                    <i class="fa-solid fa-book-open text-[var(--teal)] text-[17px] mb-3"></i>
+                    <p class="text-[20px] font-extrabold text-[var(--teal-deep)] leading-none">3</p>
+                    <p class="text-[11.5px] text-slate-400 font-semibold mt-1.5">Program Kesetaraan</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-[0_15px_35px_-15px_rgba(12,63,64,0.25)] border border-slate-100 px-5 py-5">
+                    <i class="fa-solid fa-award text-[var(--teal)] text-[17px] mb-3"></i>
+                    <p class="text-[20px] font-extrabold text-[var(--teal-deep)] leading-none">A</p>
+                    <p class="text-[11.5px] text-slate-400 font-semibold mt-1.5">Akreditasi Nasional</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-[0_15px_35px_-15px_rgba(12,63,64,0.25)] border border-slate-100 px-5 py-5">
+                    <i class="fa-solid fa-calendar text-[var(--teal)] text-[17px] mb-3"></i>
+                    <p class="text-[20px] font-extrabold text-[var(--teal-deep)] leading-none">2010</p>
+                    <p class="text-[11.5px] text-slate-400 font-semibold mt-1.5">Berdiri Sejak</p>
+                </div>
             </div>
         </div>
 
-        <form id="formLogin" class="space-y-5">
-            <div class="space-y-1.5">
-                <label for="username" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Username / NISN</label>
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                        <i class="fa-solid fa-user text-sm"></i>
+        <section id="tentang" class="max-w-6xl mx-auto px-5 sm:px-8 pt-24 pb-20">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="photo-panel rounded-3xl overflow-hidden aspect-[4/3]" img="foto(1).png">
+                    <svg viewBox="0 0 400 300" preserveAspectRatio="none">
+                        <path d="M40 300 L40 150 Q40 115 78 115 L120 115 Q158 115 158 150 L158 300" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                        <path d="M220 300 L220 90 Q220 55 268 55 L305 55 Q353 55 353 90 L353 300" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                    </svg>
+                    <div class="absolute bottom-5 left-5 right-5 bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl px-5 py-4">
+                        <p class="text-[13px] text-white/90 italic leading-snug">&ldquo;Pendidikan adalah kunci membuka pintu emas kebebasan.&rdquo;</p>
                     </div>
-                    <input type="text" id="username" required autocomplete="username"
-                        class="w-full pl-11 pr-4 py-3.5 bg-slate-50/80 border border-slate-200/80 rounded-2xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner" 
-                        placeholder="Masukkan username atau NISN">
+                </div>
+
+                <div>
+                    <p class="text-[11px] font-bold tracking-[0.2em] text-[var(--teal)] mb-3">Tentang Kami</p>
+                    <h2 class="text-[26px] sm:text-[30px] font-extrabold text-[var(--teal-deep)] tracking-tight leading-tight mb-4">
+                        Pusat Kegiatan Belajar Masyarakat Cahaya Kahuripan Bangsa
+                    </h2>
+                    <p class="text-[13.5px] text-slate-500 leading-relaxed mb-4">
+                        Didirikan dengan izin resmi Dinas Pendidikan Kabupaten Bandung Barat, PKBM Cahaya Kahuripan Bangsa berkomitmen menyediakan akses pendidikan kesetaraan berkualitas bagi seluruh lapisan masyarakat yang tidak berkesempatan menempuh jalur pendidikan formal.
+                    </p>
+                    <p class="text-[13.5px] text-slate-500 leading-relaxed mb-7">
+                        Melalui kurikulum yang fleksibel dan metode pembelajaran yang adaptif, kami membantu setiap individu meraih ijazah setara yang diakui secara nasional.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 max-w-sm">
+                        <div class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-[var(--emerald)] mt-0.5 text-[13px]"></i>
+                            <span class="text-[13px] font-semibold text-slate-600">Terakreditasi A / BAN PDM</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-[var(--emerald)] mt-0.5 text-[13px]"></i>
+                            <span class="text-[13px] font-semibold text-slate-600">Ijazah Diakui Nasional</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="space-y-1.5">
-                <label for="password" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">KATA SANDI</label>
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                        <i class="fa-solid fa-lock text-sm"></i>
+        <section class="bg-slate-50 py-20 px-5 sm:px-8">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--teal)] mb-3">Arah Kami</p>
+                    <h2 class="text-[26px] sm:text-[30px] font-extrabold text-[var(--teal-deep)] tracking-tight">Visi, Misi &amp; Tujuan</h2>
+                </div>
+                <div class="grid lg:grid-cols-3 gap-5">
+                    <div class="bg-white rounded-2xl border-t-4 border-[var(--teal-deep)] shadow-sm px-7 py-8">
+                        <i class="fa-regular fa-eye text-[var(--teal)] text-[18px] mb-4"></i>
+                        <h3 class="text-[16px] font-extrabold text-[var(--teal-deep)] mb-2.5">Visi</h3>
+                        <p class="text-[13.5px] text-slate-500 leading-relaxed">Mendidik, memberdayakan, serta menghasilkan anak bangsa yang mandiri, tangguh, berprestasi, dan berbudi pekerti luhur sehingga siap untuk berkontribusi nyata bagi pembangunan bangsa.</p>
                     </div>
-                    <input type="password" id="password" required autocomplete="current-password"
-                        class="w-full pl-11 pr-12 py-3.5 bg-slate-50/80 border border-slate-200/80 rounded-2xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:outline-none transition-all shadow-inner" 
-                        placeholder="••••••••">
-                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer transition-colors focus:outline-none">
-                        <i id="eyeIcon" class="fa-solid fa-eye text-xs"></i>
+                    <div class="bg-white rounded-2xl border-t-4 border-[var(--emerald)] shadow-sm px-7 py-8">
+                        <i class="fa-solid fa-bullseye text-[var(--emerald)] text-[18px] mb-4"></i>
+                        <h3 class="text-[16px] font-extrabold text-[var(--teal-deep)] mb-2.5">Misi</h3>
+                        <ul class="space-y-2.5 text-[13.5px] text-slate-500 leading-relaxed">
+                            <li class="flex gap-2"><span class="text-[var(--emerald)]">&bull;</span> Menjadi mitra/rekan kerja pemerintah daerah dalam menyelenggarakan pendidikan Anak Usia Dini (PAUD), Non-formal, dan Informal</li>
+                            <li class="flex gap-2"><span class="text-[var(--emerald)]">&bull;</span> Menyelenggarakan PAUD, Non-formal, dan Informal yang berkualitas, inovatif, aplikatif, berdaya saing, dan berkemitraan</li>
+                            <li class="flex gap-2"><span class="text-[var(--emerald)]">&bull;</span> Menerapkan sistem pembelajaran yang mudah dan terjangkau oleh seluruh lapisan masyarakat di Kecamatan Lembang dan sekitarnya</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-2xl border-t-4 border-[#d98a3d] shadow-sm px-7 py-8">
+                        <i class="fa-solid fa-flag-checkered text-[#d98a3d] text-[18px] mb-4"></i>
+                        <h3 class="text-[16px] font-extrabold text-[var(--teal-deep)] mb-2.5">Tujuan</h3>
+                        <ul class="space-y-2.5 text-[13.5px] text-slate-500 leading-relaxed">
+                            <li class="flex gap-2"><span class="text-[#d98a3d]">&bull;</span> Membuat wadah pembinaan, pelatihan, dan berbagai kursus keterampilan bagi masyarakat</li>
+                            <li class="flex gap-2"><span class="text-[#d98a3d]">&bull;</span> Menciptakan peluang kerja bagi masyarakat</li>
+                            <li class="flex gap-2"><span class="text-[#d98a3d]">&bull;</span> Turut serta mencerdaskan anak bangsa</li>
+                            <li class="flex gap-2"><span class="text-[#d98a3d]">&bull;</span> Turut membantu mensejahterakan anak bangsa</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== KEPALA SEKOLAH ===================== -->
+        <section class="max-w-5xl mx-auto px-5 sm:px-8 py-20">
+            <div class="text-center mb-12">
+                <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--teal)] mb-3">Pimpinan Kami</p>
+                <h2 class="text-[26px] sm:text-[30px] font-extrabold text-[var(--teal-deep)] tracking-tight">Kepala Sekolah</h2>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-[0_15px_35px_-20px_rgba(12,63,64,0.3)] px-7 sm:px-10 py-9 sm:py-10 flex flex-col sm:flex-row items-center sm:items-start gap-7">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-[var(--teal-deep)] flex items-center justify-center text-white text-[28px] font-extrabold shrink-0">
+                    <img src="bu-lince">
+                </div>
+                <div class="flex-1 text-center sm:text-left">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--teal)] mb-1.5">Kepala PKBM Cahaya Kahuripan Bangsa</p>
+                    <h3 class="text-[21px] sm:text-[23px] font-extrabold text-[var(--teal-deep)] tracking-tight mb-3">Lince Sari Dianawati Leatemia, M.Pd</h3>
+                    <p class="text-[13.5px] text-slate-500 leading-relaxed mb-5 max-w-lg">
+                        Memimpin penyelenggaraan pendidikan kesetaraan Paket A, B, dan C di PKBM Cahaya Kahuripan Bangsa, dengan komitmen menghadirkan akses belajar yang mudah dan terjangkau bagi seluruh warga belajar di Kecamatan Lembang dan sekitarnya.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2 text-[13px] font-semibold text-slate-500">
+                        <a href="mailto:admin@pkbmckb.org" class="flex items-center gap-2 hover:text-[var(--teal-deep)] transition-colors">
+                            <i class="fa-regular fa-envelope text-[var(--teal)] text-[12px]"></i> admin@pkbmckb.org
+                        </a>
+                        <a href="tel:2786466" class="flex items-center gap-2 hover:text-[var(--teal-deep)] transition-colors">
+                            <i class="fa-solid fa-phone text-[var(--teal)] text-[12px]"></i> 2786466
+                        </a>
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-hashtag text-[var(--teal)] text-[12px]"></i> NPSN P9957033
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="program" class="max-w-6xl mx-auto px-5 sm:px-8 py-20">
+            <div class="text-center mb-12">
+                <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--teal)] mb-3">Kurikulum Kami</p>
+                <h2 class="text-[26px] sm:text-[30px] font-extrabold text-[var(--teal-deep)] tracking-tight mb-3">Program Pendidikan Kesetaraan</h2>
+                <p class="text-[13.5px] text-slate-500 max-w-lg mx-auto">Ijazah yang diakui secara nasional dan setara dengan sekolah formal, membuka peluang untuk melanjutkan studi atau bekerja.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-3 gap-5">
+                <div class="rounded-2xl border border-slate-100 shadow-sm px-7 py-8 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-11 h-11 rounded-xl bg-teal-50 flex items-center justify-center">
+                            <i class="fa-solid fa-child-reaching text-[var(--teal-deep)] text-[16px]"></i>
+                        </div>
+                        <span class="text-[10.5px] font-bold text-[var(--teal)] bg-teal-50 px-2.5 py-1 rounded-full">Setara SD</span>
+                    </div>
+                    <h3 class="text-[16px] font-extrabold text-[var(--teal-deep)] mb-2">Paket A</h3>
+                    <p class="text-[13px] text-slate-500 leading-relaxed">Program pendidikan dasar yang difokuskan pada penguasaan baca, tulis, hitung, serta pembentukan karakter.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-100 shadow-sm px-7 py-8 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-11 h-11 rounded-xl bg-teal-50 flex items-center justify-center">
+                            <i class="fa-solid fa-flask text-[var(--teal-deep)] text-[16px]"></i>
+                        </div>
+                        <span class="text-[10.5px] font-bold text-[var(--teal)] bg-teal-50 px-2.5 py-1 rounded-full">Setara SMP</span>
+                    </div>
+                    <h3 class="text-[16px] font-extrabold text-[var(--teal-deep)] mb-2">Paket B</h3>
+                    <p class="text-[13px] text-slate-500 leading-relaxed">Program pendidikan menengah pertama yang menekankan pengembangan logika, sains, dan keterampilan sosial.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-100 shadow-sm px-7 py-8 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-11 h-11 rounded-xl bg-teal-50 flex items-center justify-center">
+                            <i class="fa-solid fa-briefcase text-[var(--teal-deep)] text-[16px]"></i>
+                        </div>
+                        <span class="text-[10.5px] font-bold text-[var(--teal)] bg-teal-50 px-2.5 py-1 rounded-full">Setara SMA</span>
+                    </div>
+                    <h3 class="text-[16px] font-extrabold text-[var(--teal-deep)] mb-2">Paket C</h3>
+                    <p class="text-[13px] text-slate-500 leading-relaxed">Program pendidikan menengah atas yang mempersiapkan peserta didik untuk melanjutkan ke perguruan tinggi atau dunia kerja.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-5 sm:px-8 pb-20">
+            <div class="max-w-5xl mx-auto relative about-panel rounded-3xl overflow-hidden px-8 sm:px-14 py-12 sm:py-14 text-center">
+                <svg viewBox="0 0 800 260" preserveAspectRatio="none">
+                    <path d="M100 260 L100 130 Q100 95 138 95 L180 95 Q218 95 218 130 L218 260" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                    <path d="M580 260 L580 70 Q580 35 628 35 L665 35 Q713 35 713 70 L713 260" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                </svg>
+                <div class="relative z-10">
+                    <h2 class="text-[24px] sm:text-[30px] font-extrabold text-white tracking-tight mb-3">Siap Memulai Babak Baru Pendidikan Anda?</h2>
+                    <p class="text-[13.5px] text-white/70 max-w-lg mx-auto mb-8">Bergabunglah dengan ratusan warga belajar lain yang telah menemukan kembali jalan pendidikannya bersama kami.</p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                        <a href="#register" data-view="register" class="nav-link w-full sm:w-auto text-[13.5px] font-bold text-[var(--teal-deep)] bg-white px-7 py-3.5 rounded-xl hover:bg-slate-100 transition-colors">Daftar Sekarang</a>
+                        <a href="#kontak" class="w-full sm:w-auto text-[13.5px] font-bold text-white border border-white/30 px-7 py-3.5 rounded-xl hover:bg-white/10 transition-colors">Hubungi Kami</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer id="kontak" class="bg-[var(--teal-deep)] text-white/70 pt-16 pb-8 px-5 sm:px-8">
+            <div class="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-12">
+                <div>
+                    <a href="#beranda" data-view="landing" class="nav-link flex items-center gap-2.5 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0 p-1 overflow-hidden">
+                            <img src="img-logo-pkbm.png" alt="Logo PKBM" class="w-full h-full object-contain">
+                        </div>
+                        <span class="text-[15px] font-extrabold text-white tracking-tight">Cahaya Kahuripan</span>
+                    </a>
+                    <p class="text-[13px] leading-relaxed">Pusat kegiatan belajar masyarakat yang berfokus pada pendidikan kesetaraan yang inklusif dan berkualitas.</p>
+                </div>
+                <div>
+                    <p class="text-[12px] font-bold text-white uppercase tracking-wider mb-4">Tautan Cepat</p>
+                    <ul class="space-y-2.5 text-[13px]">
+                        <li><a href="#beranda" class="hover:text-white transition-colors">Beranda</a></li>
+                        <li><a href="#program" class="hover:text-white transition-colors">Program Belajar</a></li>
+                        <li><a href="#register" data-view="register" class="nav-link hover:text-white transition-colors">Pendaftaran</a></li>
+                        <li><a href="#kontak" class="hover:text-white transition-colors">Kontak Kami</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="text-[12px] font-bold text-white uppercase tracking-wider mb-4">Hubungi Kami</p>
+                    <ul class="space-y-2.5 text-[13px]">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-location-dot mt-1 text-[11px]"></i> Jl. Maribaya No. 1, Ruko Central Lembang Blok B-6, Lembang, KBB 40391</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-phone text-[11px]"></i> 2786466</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-globe text-[11px]"></i> pkbmckb.org</li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="text-[12px] font-bold text-white uppercase tracking-wider mb-4">Portal Akademik</p>
+                    <div class="flex flex-col gap-2.5">
+                        <a href="#login" data-view="login" class="nav-link text-[13px] font-semibold hover:text-white transition-colors">Masuk ke Akun &rarr;</a>
+                        <a href="#register" data-view="register" class="nav-link text-[13px] font-semibold hover:text-white transition-colors">Daftar Warga Belajar &rarr;</a>
+                    </div>
+                </div>
+            </div>
+            <div class="max-w-6xl mx-auto border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11.5px] text-white/50">
+                <p>&copy; 2026 PKBM Cahaya Kahuripan Bangsa. Hak Cipta Dilindungi.</p>
+                <p>Izin Disdikpora KBB No. 421/047.17/disdikpora/2017</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- =========================================================== -->
+    <!-- VIEW 2: LOGIN                                                -->
+    <!-- =========================================================== -->
+    <div id="view-login" class="app-view">
+        <div class="min-h-screen w-full flex flex-col lg:flex-row">
+
+            <div class="w-full lg:w-[46%] flex flex-col justify-center px-7 sm:px-14 lg:px-16 py-10 lg:py-0">
+                <div class="w-full max-w-sm mx-auto lg:mx-0">
+
+                    <a href="#beranda" data-view="landing" class="nav-link inline-flex items-center gap-2.5 mb-12">
+                        <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0 p-1 ring-1 ring-slate-100 overflow-hidden">
+                            <img src="img-logo-pkbm.png" alt="Logo PKBM" class="w-full h-full object-contain">
+                        </div>
+                        <span class="text-[17px] font-extrabold text-[var(--teal-deep)] tracking-tight">Cahaya Kahuripan</span>
+                    </a>
+
+                    <h1 class="text-[30px] sm:text-[34px] font-extrabold text-[var(--teal-deep)] tracking-tight mb-2">Selamat Datang</h1>
+                    <p class="text-[14px] text-slate-500 mb-8">Silakan masuk ke akun pembelajaran Anda.</p>
+
+                    <form id="formLogin" class="space-y-5">
+                        <div class="space-y-1.5">
+                            <label for="username" class="block text-[13px] font-semibold text-slate-700">Username / NISN</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-regular fa-envelope text-[15px]"></i>
+                                </div>
+                                <input type="text" id="username" required autocomplete="username"
+                                    class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-[14px] font-medium text-[var(--ink)] placeholder-slate-400 focus:border-[var(--teal)] focus:ring-4 focus:ring-[var(--teal)]/10 focus:outline-none transition-all"
+                                    placeholder="Masukkan username atau NISN">
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label for="password" class="block text-[13px] font-semibold text-slate-700">Kata Sandi</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-lock text-[14px]"></i>
+                                </div>
+                                <input type="password" id="password" required autocomplete="current-password"
+                                    class="w-full pl-11 pr-12 py-3.5 bg-white border border-slate-200 rounded-xl text-[14px] font-medium text-[var(--ink)] placeholder-slate-400 focus:border-[var(--teal)] focus:ring-4 focus:ring-[var(--teal)]/10 focus:outline-none transition-all"
+                                    placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+                                <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer">
+                                    <i id="eyeIcon" class="fa-solid fa-eye text-[13px]"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-0.5">
+                            <label class="flex items-center gap-2 text-[13px] text-slate-500 font-medium cursor-pointer select-none">
+                                <input type="checkbox" id="rememberMe" class="w-3.5 h-3.5 rounded border-slate-300 text-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/25 cursor-pointer">
+                                Ingat saya
+                            </label>
+                            <button type="button" onclick="alert('Silakan hubungi admin sekolah untuk reset kata sandi Anda.')" class="text-[13px] font-bold text-[var(--teal-deep)] hover:text-[var(--teal)] transition-colors cursor-pointer">Lupa Password?</button>
+                        </div>
+
+                        <button type="submit" id="btnLogin" class="w-full mt-2 group/btn bg-[var(--teal-deep)] text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-[0_10px_25px_-8px_rgba(12,63,64,0.5)] hover:shadow-[0_12px_28px_-6px_rgba(12,63,64,0.6)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer text-[14px] flex items-center justify-center gap-2">
+                            Masuk <i class="fa-solid fa-arrow-right text-[12px] transition-transform group-hover/btn:translate-x-0.5"></i>
+                        </button>
+                    </form>
+
+                    <p class="text-center text-[13px] text-slate-500 font-medium mt-6">
+                        Belum punya akun? <a href="#register" data-view="register" class="nav-link font-bold text-[var(--teal-deep)] hover:text-[var(--teal)] transition-colors">Daftar Sekarang</a>
+                    </p>
+
+                    <div class="flex items-center gap-3 my-7">
+                        <div class="h-px flex-1 bg-slate-200"></div>
+                        <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">Akses Institusi</span>
+                        <div class="h-px flex-1 bg-slate-200"></div>
+                    </div>
+
+                    <button type="button" onclick="alert('Pindai QR Code segera hadir.')" class="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl border border-slate-200 text-[13.5px] font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+                        <i class="fa-solid fa-qrcode text-[14px]"></i> Scan QR
                     </button>
+
+                    <p class="hidden lg:block text-[11.5px] text-slate-400 font-medium mt-12">&copy; 2026 PKBM Cahaya Kahuripan Bangsa. Hak Cipta Dilindungi.</p>
                 </div>
             </div>
 
-            <button type="submit" id="btnLogin" class="w-full mt-2 relative overflow-hidden group/btn bg-gradient-to-r from-sky-500 via-sky-600 to-emerald-500 text-white font-bold py-3.5 rounded-2xl transition-all duration-300 shadow-[0_4px_20px_rgba(14,165,233,0.25)] hover:shadow-[0_4px_25px_rgba(14,165,233,0.4)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer text-xs tracking-wide flex items-center justify-center gap-2">
-                <span class="absolute inset-0 w-full h-full bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></span>
-                <i class="fa-solid fa-right-to-bracket text-[11px] transition-transform group-hover/btn:translate-x-0.5"></i> Autentikasi Akun
-            </button>
-        </form>
+            <div class="hidden lg:flex relative w-[54%] photo-panel items-center px-16 overflow-hidden">
+                <svg viewBox="0 0 400 700" preserveAspectRatio="none">
+                    <path d="M40 700 L40 260 Q40 220 80 220 L140 220 Q180 220 180 260 L180 700" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                    <path d="M220 700 L220 180 Q220 130 275 130 L330 130 Q385 130 385 180 L385 700" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                    <path d="M0 700 L0 380 Q0 350 30 350 L70 350 Q100 350 100 380 L100 700" stroke="#ffffff" stroke-width="1" fill="none" opacity="0.6"/>
+                </svg>
 
-        <div class="mt-8 text-center border-t border-slate-100 pt-5">
-            <p class="text-xs text-slate-400 font-medium">
-                Warga belajar baru? <a href="#" onclick="alert('Pendaftaran online mandiri sedang ditutup. Silakan datang langsung ke sekretariat PKBM.')" class="font-bold text-sky-600 hover:text-sky-700 transition-colors underline decoration-sky-500/30 underline-offset-2">Daftar Akun Di Sini</a>
-            </p>
+                <div class="relative z-10 max-w-md bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl px-9 py-10">
+                    <div class="w-10 h-1 rounded-full bg-[var(--emerald)] mb-6"></div>
+                    <h2 class="text-[30px] sm:text-[34px] font-extrabold text-white leading-[1.15] mb-4">Membangun Masa Depan Melalui Cahaya Pendidikan.</h2>
+                    <p class="text-[13.5px] leading-relaxed text-white/70 mb-8">
+                        Kami berkomitmen menyediakan akses pendidikan kesetaraan yang merata dan berkualitas bagi seluruh lapisan masyarakat.
+                    </p>
+                    <div class="flex items-center gap-8">
+                        <div>
+                            <p class="text-[22px] font-extrabold text-white leading-none">500+</p>
+                            <p class="text-[10.5px] font-bold text-white/50 uppercase tracking-wider mt-1.5">Warga Belajar</p>
+                        </div>
+                        <div>
+                            <p class="text-[22px] font-extrabold text-[var(--emerald)] leading-none">A&middot;B&middot;C</p>
+                            <p class="text-[10.5px] font-bold text-white/50 uppercase tracking-wider mt-1.5">Program Kesetaraan</p>
+                        </div>
+                        <div>
+                            <p class="text-[22px] font-extrabold text-[var(--emerald)] leading-none">A</p>
+                            <p class="text-[10.5px] font-bold text-white/50 uppercase tracking-wider mt-1.5">Akreditasi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================== -->
+    <!-- VIEW 3: REGISTER                                             -->
+    <!-- =========================================================== -->
+    <div id="view-register" class="app-view">
+        <div class="min-h-screen w-full flex flex-col lg:flex-row">
+
+            <div class="w-full lg:w-[46%] flex flex-col justify-center px-7 sm:px-14 lg:px-16 py-10 lg:py-0">
+                <div class="w-full max-w-sm mx-auto lg:mx-0">
+
+                    <a href="#beranda" data-view="landing" class="nav-link inline-flex items-center gap-2.5 mb-12">
+                        <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0 p-1 ring-1 ring-slate-100 overflow-hidden">
+                            <img src="img-logo-pkbm.png" alt="Logo PKBM" class="w-full h-full object-contain">
+                        </div>
+                        <span class="text-[17px] font-extrabold text-[var(--teal-deep)] tracking-tight">Cahaya Kahuripan</span>
+                    </a>
+
+                    <div class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-feather-pointed text-[16px] text-amber-500"></i>
+                    </div>
+
+                    <h1 class="text-[28px] sm:text-[32px] font-extrabold text-[var(--teal-deep)] tracking-tight leading-tight mb-3">Pendaftaran Warga Belajar Baru</h1>
+                    <p class="text-[14px] text-slate-500 leading-relaxed mb-8">
+                        Untuk sementara, pendaftaran mandiri secara online belum kami buka. Silakan datang langsung ke sekretariat atau hubungi kontak berikut untuk mendaftar.
+                    </p>
+
+                    <div class="space-y-4 mb-9">
+                        <div class="flex items-start gap-3.5 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                            <i class="fa-solid fa-location-dot mt-0.5 text-[var(--teal)] w-4"></i>
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Sekretariat</p>
+                                <p class="text-[13.5px] font-medium text-slate-700 leading-snug">Jl. Maribaya No. 1, Ruko Central Lembang Blok B-6, Lembang, Kabupaten Bandung Barat 40391</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3.5 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                            <i class="fa-solid fa-phone mt-0.5 text-[var(--teal)] w-4"></i>
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Telepon</p>
+                                <a href="tel:2786466" class="text-[13.5px] font-bold text-[var(--teal-deep)]">2786466</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3.5 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                            <i class="fa-solid fa-globe mt-0.5 text-[var(--teal)] w-4"></i>
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Situs</p>
+                                <p class="text-[13.5px] font-bold text-[var(--teal-deep)]">pkbmckb.org</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="#login" data-view="login" class="nav-link w-full bg-[var(--teal-deep)] text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-[0_10px_25px_-8px_rgba(12,63,64,0.5)] hover:shadow-[0_12px_28px_-6px_rgba(12,63,64,0.6)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer text-[14px] flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-left text-[12px]"></i> Kembali ke Halaman Masuk
+                    </a>
+
+                    <p class="hidden lg:block text-[11.5px] text-slate-400 font-medium mt-12">&copy; 2026 PKBM Cahaya Kahuripan Bangsa. Hak Cipta Dilindungi.</p>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex relative w-[54%] photo-panel items-center px-16 overflow-hidden">
+                <svg viewBox="0 0 400 700" preserveAspectRatio="none">
+                    <path d="M40 700 L40 260 Q40 220 80 220 L140 220 Q180 220 180 260 L180 700" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                    <path d="M220 700 L220 180 Q220 130 275 130 L330 130 Q385 130 385 180 L385 700" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                    <path d="M0 700 L0 380 Q0 350 30 350 L70 350 Q100 350 100 380 L100 700" stroke="#ffffff" stroke-width="1" fill="none" opacity="0.6"/>
+                </svg>
+
+                <div class="relative z-10 max-w-md bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl px-9 py-10">
+                    <div class="w-10 h-1 rounded-full bg-[var(--emerald)] mb-6"></div>
+                    <h2 class="text-[30px] sm:text-[34px] font-extrabold text-white leading-[1.15] mb-4">Setiap Warga Belajar Berhak Atas Masa Depan Cerah.</h2>
+                    <p class="text-[13.5px] leading-relaxed text-white/70 mb-8">
+                        Bergabunglah dengan ratusan warga belajar lain yang telah menemukan kembali jalan pendidikannya bersama kami.
+                    </p>
+                    <div class="flex items-center gap-8">
+                        <div>
+                            <p class="text-[22px] font-extrabold text-white leading-none">2017</p>
+                            <p class="text-[10.5px] font-bold text-white/50 uppercase tracking-wider mt-1.5">Berdiri Sejak</p>
+                        </div>
+                        <div>
+                            <p class="text-[22px] font-extrabold text-[var(--emerald)] leading-none">3</p>
+                            <p class="text-[10.5px] font-bold text-white/50 uppercase tracking-wider mt-1.5">Program Kesetaraan</p>
+                        </div>
+                        <div>
+                            <p class="text-[22px] font-extrabold text-[var(--emerald)] leading-none">A</p>
+                            <p class="text-[10.5px] font-bold text-white/50 uppercase tracking-wider mt-1.5">Akreditasi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyGlU37Wc71nhfjEEWQzvCzMHLCt-dJq1SXe7znPdT_43GclShH5KoXuI-c0VVVjwOP6A/exec";
 
-        // FUNCTION TOGGLE SECURITY PASSWORD VISIBILITY
+        // ---------- sistem perpindahan tampilan (landing / login / register) ----------
+        const VALID_VIEWS = ['landing', 'login', 'register'];
+
+        function showView(name) {
+            if (!VALID_VIEWS.includes(name)) name = 'landing';
+
+            document.querySelectorAll('.app-view').forEach(el => {
+                el.classList.remove('is-active', 'is-visible');
+            });
+
+            const target = document.getElementById('view-' + name);
+            target.classList.add('is-active');
+            // beri 1 frame supaya transisi opacity berjalan
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                target.classList.add('is-visible');
+            }));
+
+            window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+        }
+
+        function viewFromHash() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash === 'login') return 'login';
+            if (hash === 'register') return 'register';
+            return 'landing';
+        }
+
+        // klik tombol/link yang punya data-view -> ganti tampilan tanpa reload
+        document.addEventListener('click', function (e) {
+            const link = e.target.closest('.nav-link[data-view]');
+            if (!link) return;
+            e.preventDefault();
+            const view = link.getAttribute('data-view');
+            window.location.hash = view === 'landing' ? 'beranda' : view;
+            showView(view);
+        });
+
+        window.addEventListener('hashchange', () => showView(viewFromHash()));
+
         document.addEventListener("DOMContentLoaded", function () {
+            showView(viewFromHash());
+
+            // ---------- toggle visibilitas kata sandi ----------
             const passwordInput = document.getElementById("password");
             const togglePassword = document.getElementById("togglePassword");
             const eyeIcon = document.getElementById("eyeIcon");
-
             if (togglePassword && passwordInput && eyeIcon) {
                 togglePassword.addEventListener("click", function () {
                     const isPassword = passwordInput.getAttribute("type") === "password";
                     passwordInput.setAttribute("type", isPassword ? "text" : "password");
-                    
-                    if (isPassword) {
-                        eyeIcon.classList.remove("fa-eye");
-                        eyeIcon.classList.add("fa-eye-slash");
-                    } else {
-                        eyeIcon.classList.remove("fa-eye-slash");
-                        eyeIcon.classList.add("fa-eye");
-                    }
+                    eyeIcon.classList.toggle("fa-eye", !isPassword);
+                    eyeIcon.classList.toggle("fa-eye-slash", isPassword);
                 });
             }
         });
 
-        // AJAX LIVE SUBMIT ACTION LOGIN
-        document.getElementById('formLogin').addEventListener('submit', async function(e) {
+        // ---------- submit login ----------
+        document.getElementById('formLogin').addEventListener('submit', async function (e) {
             e.preventDefault();
             const btn = document.getElementById('btnLogin');
-            btn.disabled = true; 
+            btn.disabled = true;
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Memeriksa...`;
 
             try {
@@ -119,11 +624,11 @@
                 } else {
                     alert(result.message);
                 }
-            } catch (error) { 
-                alert("Gagal terhubung dengan server database."); 
-            } finally { 
-                btn.disabled = false; 
-                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket mr-1.5"></i> Autentikasi Akun`; 
+            } catch (error) {
+                alert("Gagal terhubung dengan server database.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `Masuk <i class="fa-solid fa-arrow-right text-[12px] ml-1"></i>`;
             }
         });
     </script>
