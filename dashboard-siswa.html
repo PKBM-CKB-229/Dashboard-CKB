@@ -19,12 +19,21 @@
             <button onclick="toggleSidebarSiswa()" class="w-9 h-9 rounded-xl hover:bg-slate-100 transition flex items-center justify-center border border-slate-200/50 cursor-pointer">
                 <i class="fa-solid fa-bars text-slate-600"></i>
             </button>
-            <div>
-                <h1 class="text-xs font-black tracking-tight text-slate-800">PKBM SISWA</h1>
-                <span id="kelasBadgeMobile" class="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-1.5 py-0.2 rounded font-bold shadow-3xs inline-block">Kelas: Loading...</span>
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 bg-white border border-slate-200 rounded-lg flex items-center justify-center p-1 shadow-2xs shrink-0">
+                    <img src="img-logo-pkbm.png" alt="Logo" class="w-full h-full object-contain" onerror="this.style.display='none'">
+                </div>
+                <div>
+                    <h1 class="text-xs font-black tracking-tight text-slate-800 leading-tight">PKBM CKB</h1>
+                    <span id="kelasBadgeMobile" class="text-[9px] text-slate-400 font-bold uppercase tracking-wide leading-tight block">Kelas: Loading...</span>
+                </div>
             </div>
         </div>
         <div class="flex items-center gap-2">
+            <button onclick="notifInfo('Belum ada notifikasi baru untuk kamu.')" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer relative">
+                <i class="fa-regular fa-bell text-sm"></i>
+                <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+            </button>
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
                 <i class="fa-solid fa-user-graduate text-[10px]"></i>
             </div>
@@ -92,24 +101,98 @@
 
     <main id="mainContent" class="flex-1 md:pl-64 min-h-screen flex flex-col relative z-10 transition-all duration-300 pt-16 md:pt-0">
         
-        <header class="hidden md:flex bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-6 py-4 justify-between items-center shadow-[0_2px_20px_-5px_rgba(0,0,0,0.03)]">
-            <div class="flex items-center gap-3">
-                <div>
-                    <h2 id="judulHalaman" class="text-base font-black text-slate-800 tracking-tight">Beranda Belajar</h2>
-                    <p id="deskripsiHalaman" class="text-[11px] text-slate-400 mt-0.5 font-medium">Selamat datang kembali! Periksa informasi akademik terupdate kamu di sini.</p>
+        <header class="hidden md:flex bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-6 py-3.5 justify-between items-center gap-6 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.03)]">
+            <div class="relative flex-1 max-w-sm">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 text-xs"></i>
+                <input type="text" placeholder="Cari materi atau tugas..." class="w-full bg-slate-50 border border-slate-200/70 rounded-xl pl-9 pr-3 py-2.5 text-xs font-medium text-slate-600 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/10 transition-all">
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="notifInfo('Belum ada notifikasi baru untuk kamu.')" class="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer relative transition-colors">
+                    <i class="fa-regular fa-bell text-sm"></i>
+                    <span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-rose-500 ring-2 ring-white"></span>
+                </button>
+                <button onclick="notifInfo('Butuh bantuan? Hubungi admin sekolah di 2786466.')" class="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer transition-colors">
+                    <i class="fa-regular fa-circle-question text-sm"></i>
+                </button>
+                <div class="h-8 w-px bg-slate-200 mx-1"></div>
+                <div class="flex items-center gap-2.5">
+                    <div class="text-right leading-tight hidden lg:block">
+                        <p id="namaSiswaTopbar" class="text-xs font-bold text-slate-700 truncate max-w-[140px]">Siswa...</p>
+                        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Warga Belajar</p>
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-2xs shrink-0">
+                        <i class="fa-solid fa-user-graduate text-xs"></i>
+                    </div>
                 </div>
             </div>
         </header>
 
+        <div class="px-6 pt-5 hidden md:block">
+            <h2 id="judulHalaman" class="text-lg font-black text-slate-800 tracking-tight">Beranda Belajar</h2>
+            <p id="deskripsiHalaman" class="text-[11.5px] text-slate-400 mt-0.5 font-medium">Selamat datang kembali! Periksa informasi akademik terupdate kamu di sini.</p>
+        </div>
+
         <div class="p-4 sm:p-6 flex-1 max-w-4xl w-full mx-auto space-y-4">
             
-            <div id="panel-Beranda" class="menu-panel space-y-5">
-                <div class="bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-600 rounded-2xl p-5 sm:p-6 text-white shadow-md shadow-teal-700/10 relative overflow-hidden">
-                    <div class="absolute right-[-5%] top-[-20%] w-32 h-32 sm:w-40 sm:h-40 bg-white/10 blur-2xl rounded-full"></div>
-                    <div class="relative z-10 space-y-2">
-                        <span class="bg-white/20 text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full backdrop-blur-xs">Sistem Academic Mandiri</span>
-                        <h3 class="text-base sm:text-lg font-black tracking-tight">Semangat Belajar, Warga Belajar Hebat!</h3>
-                        <p class="text-[11px] sm:text-xs text-teal-100/90 max-w-xl font-medium leading-relaxed">Gunakan bilah menu navigasi untuk memeriksa jadwal ujian, rangkuman materi dari tutor, serta melakukan absensi digital kelas secara mandiri.</p>
+            <div id="panel-Beranda" class="menu-panel space-y-4">
+                <div class="bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-600 rounded-2xl p-5 sm:p-7 text-white shadow-md shadow-teal-700/10 relative overflow-hidden">
+                    <div class="absolute right-[-5%] top-[-30%] w-40 h-40 sm:w-56 sm:h-56 bg-white/10 blur-3xl rounded-full"></div>
+                    <i class="fa-solid fa-graduation-cap absolute right-4 sm:right-8 bottom-[-16px] text-white/10 text-[90px] sm:text-[130px] pointer-events-none"></i>
+                    <div class="relative z-10 space-y-3 max-w-lg">
+                        <span class="bg-white/20 text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full backdrop-blur-xs inline-block">Sistem Academic Mandiri</span>
+                        <h3 id="sapaanSiswa" class="text-lg sm:text-2xl font-black tracking-tight">Halo, Warga Belajar! 👋</h3>
+                        <p class="text-[11px] sm:text-xs text-teal-100/90 font-medium leading-relaxed">Gunakan bilah menu navigasi untuk memeriksa jadwal ujian, rangkuman materi dari tutor, serta melakukan absensi digital kelas secara mandiri.</p>
+                        <div class="flex flex-wrap gap-2.5 pt-1">
+                            <button onclick="pintasMenuSiswa('Ujian')" class="bg-white text-teal-700 font-bold text-[11px] px-4 py-2.5 rounded-xl hover:bg-teal-50 transition-colors shadow-sm cursor-pointer flex items-center gap-1.5"><i class="fa-solid fa-bell text-[10px]"></i> Lihat Jadwal Ujian</button>
+                            <button onclick="pintasMenuSiswa('ScanQR')" class="bg-white/15 hover:bg-white/25 border border-white/25 text-white font-bold text-[11px] px-4 py-2.5 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5"><i class="fa-solid fa-qrcode text-[10px]"></i> Scan Presensi</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="bg-white/90 backdrop-blur-xl rounded-2xl border border-white p-4 sm:p-5 shadow-xs">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-black text-slate-700 text-xs uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-book-open text-emerald-500"></i> Modul Terbaru</h4>
+                                <button onclick="pintasMenuSiswa('Modul')" class="text-[10.5px] font-bold text-teal-600 hover:text-teal-700 cursor-pointer">Lihat Semua &rarr;</button>
+                            </div>
+                            <div id="previewModulBeranda" class="space-y-2.5 text-xs">
+                                <div class="text-center py-6 text-xs text-slate-400 italic font-medium">Memuat modul terbaru...</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/90 backdrop-blur-xl rounded-2xl border border-white p-4 sm:p-5 shadow-xs">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-black text-slate-700 text-xs uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-bell text-rose-500"></i> Jadwal Ujian Terdekat</h4>
+                                <button onclick="pintasMenuSiswa('Ujian')" class="text-[10.5px] font-bold text-teal-600 hover:text-teal-700 cursor-pointer">Lihat Semua &rarr;</button>
+                            </div>
+                            <div id="previewUjianBeranda" class="space-y-2.5 text-xs">
+                                <div class="text-center py-6 text-xs text-slate-400 italic font-medium">Memuat jadwal ujian...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-teal-800 to-teal-700 rounded-2xl p-5 text-white shadow-md shadow-teal-800/10 flex flex-col">
+                        <h4 class="font-black text-xs uppercase tracking-widest text-teal-100/70 mb-0.5">Kehadiran</h4>
+                        <p class="text-[10.5px] text-teal-100/50 font-medium mb-5">Statistik Presensi Kamu</p>
+                        <div class="flex-1 flex items-center justify-center py-2">
+                            <div id="donutKehadiran" class="relative w-32 h-32 rounded-full flex items-center justify-center transition-all duration-700" style="background: conic-gradient(#5eead4 0deg, rgba(255,255,255,0.12) 0deg);">
+                                <div class="absolute inset-2.5 bg-teal-800 rounded-full flex flex-col items-center justify-center">
+                                    <span id="persenHadir" class="text-2xl font-black">-%</span>
+                                    <span class="text-[8.5px] font-bold text-teal-100/60 uppercase tracking-wider">Hadir</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5 mt-2">
+                            <div class="bg-white/10 rounded-xl px-3 py-2.5">
+                                <p class="text-[9px] font-bold text-teal-100/60 uppercase tracking-wide">Sakit/Izin</p>
+                                <p id="jumlahSakitIzin" class="text-base font-black mt-0.5">- Hari</p>
+                            </div>
+                            <div class="bg-white/10 rounded-xl px-3 py-2.5">
+                                <p class="text-[9px] font-bold text-teal-100/60 uppercase tracking-wide">Alpha</p>
+                                <p id="jumlahAlpha" class="text-base font-black mt-0.5">- Hari</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -320,6 +403,11 @@
         
         // Sinkronisasi Data Profil di UI
         if (document.getElementById('namaSiswa')) document.getElementById('namaSiswa').innerText = userLogin.nama_lengkap;
+        if (document.getElementById('namaSiswaTopbar')) document.getElementById('namaSiswaTopbar').innerText = userLogin.nama_lengkap;
+        if (document.getElementById('sapaanSiswa')) {
+            const namaDepan = (userLogin.nama_lengkap || "Warga Belajar").split(" ")[0];
+            document.getElementById('sapaanSiswa').innerText = "Halo, " + namaDepan + "! 👋";
+        }
         if (document.getElementById('kelasBadge')) document.getElementById('kelasBadge').innerText = "Kelas: " + userLogin.kelas;
         if (document.getElementById('kelasBadgeMobile')) document.getElementById('kelasBadgeMobile').innerText = "Kelas: " + userLogin.kelas;
         if (document.getElementById('namaProfilKiri')) document.getElementById('namaProfilKiri').innerText = userLogin.nama_lengkap;
@@ -396,6 +484,11 @@
     };
 
     // FUNGSI GANTI MENU & RESET STYLE PREMIUM
+    function pintasMenuSiswa(target) {
+        const tombol = Array.from(document.querySelectorAll('.menu-btn')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${target}'`));
+        gantiMenu(target, tombol || null);
+    }
+
     async function gantiMenu(targetPanel, elemenTombol) {
         if (typeof matikanScanner === "function") {
             await matikanScanner();
@@ -681,10 +774,59 @@
                                         <span class="px-2.5 py-0.5 text-[9px] font-black tracking-wide border rounded-md flex items-center gap-1 uppercase shadow-2xs ${badgeColor}">
                                             <i class="fa-solid ${iconStatus} text-[10px]"></i> ${r.status}
                                         </span>
-                                        <p class="text-[10px] text-slate-400 font-mono font-medium">${r.waktu_absen}</p>
+                                                        <p class="text-[10px] text-slate-400 font-mono font-medium">${r.waktu_absen}</p>
                                     </div>
                                 </div>`;
                         });
+                    }
+                }
+
+                // ===== Widget Beranda: Kehadiran (donut), Preview Modul & Preview Ujian =====
+                const riwayat = result.riwayat_absen || [];
+                const totalSesi = riwayat.length;
+                const jumlahHadir = riwayat.filter(r => (r.status || '').toUpperCase() === 'HADIR').length;
+                const jumlahSakitIzinN = riwayat.filter(r => ['SAKIT', 'IZIN'].includes((r.status || '').toUpperCase())).length;
+                const jumlahAlphaN = Math.max(totalSesi - jumlahHadir - jumlahSakitIzinN, 0);
+                const persen = totalSesi > 0 ? Math.round((jumlahHadir / totalSesi) * 100) : 0;
+
+                const elPersen = document.getElementById('persenHadir');
+                const elDonut = document.getElementById('donutKehadiran');
+                const elSakitIzin = document.getElementById('jumlahSakitIzin');
+                const elAlpha = document.getElementById('jumlahAlpha');
+                if (elPersen) elPersen.innerText = totalSesi > 0 ? persen + "%" : "-%";
+                if (elDonut) elDonut.style.background = `conic-gradient(#5eead4 ${persen * 3.6}deg, rgba(255,255,255,0.12) 0deg)`;
+                if (elSakitIzin) elSakitIzin.innerText = jumlahSakitIzinN + " Hari";
+                if (elAlpha) elAlpha.innerText = jumlahAlphaN + " Hari";
+
+                const previewModul = document.getElementById('previewModulBeranda');
+                if (previewModul) {
+                    if (!result.agenda || result.agenda.length === 0) {
+                        previewModul.innerHTML = `<div class="text-center py-6 text-xs text-slate-400 italic font-medium">Belum ada rangkuman materi mengajar dari gurumu.</div>`;
+                    } else {
+                        previewModul.innerHTML = result.agenda.slice(0, 3).map(a => `
+                            <div class="p-3 bg-slate-50 border border-slate-150 rounded-xl flex items-center justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="font-bold text-slate-800 text-xs truncate">${a.materi}</p>
+                                    <p class="text-[10.5px] text-slate-400 font-semibold mt-0.5">${a.mata_pelajaran} &middot; ${a.tanggal ? a.tanggal.split('T')[0] : '-'}</p>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-slate-300 text-[10px] shrink-0"></i>
+                            </div>`).join('');
+                    }
+                }
+
+                const previewUjian = document.getElementById('previewUjianBeranda');
+                if (previewUjian) {
+                    if (!result.ujian || result.ujian.length === 0) {
+                        previewUjian.innerHTML = `<div class="text-center py-6 text-xs text-slate-400 italic font-medium">Tidak ada jadwal ujian aktif untuk kelasmu saat ini.</div>`;
+                    } else {
+                        previewUjian.innerHTML = result.ujian.slice(0, 3).map(u => `
+                            <div class="p-3 bg-slate-50 border border-slate-150 rounded-xl flex items-center justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="font-bold text-slate-800 text-xs truncate">${u.mata_pelajaran}</p>
+                                    <p class="text-[10.5px] text-slate-400 font-semibold mt-0.5">${bersihkanTanggal(u.tanggal)} &middot; ${bersihkanJam(u.jam)}</p>
+                                </div>
+                                <span class="px-2 py-0.5 text-[8.5px] font-black tracking-wide uppercase bg-rose-50 text-rose-600 border border-rose-100 rounded-md shrink-0">${u.jenis_ujian}</span>
+                            </div>`).join('');
                     }
                 }
             } else {

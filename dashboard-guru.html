@@ -11,21 +11,44 @@
 </head>
 <body class="bg-gradient-to-br from-slate-50 via-emerald-50/30 to-slate-100 min-h-screen text-slate-800 antialiased font-sans flex flex-col">
 
-    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 fixed top-0 inset-x-0 h-16 z-40 flex items-center justify-between px-6 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.05)]">
-        <div class="flex items-center gap-4">
-            <button onclick="toggleSidebar(true)" class="text-slate-500 hover:text-teal-600 p-2 text-xl focus:outline-none cursor-pointer transition-colors">
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 fixed top-0 inset-x-0 h-16 z-40 flex items-center justify-between px-4 sm:px-6 gap-4 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.05)]">
+        <div class="flex items-center gap-3 shrink-0">
+            <button onclick="toggleSidebar(true)" class="text-slate-500 hover:text-teal-600 w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center focus:outline-none cursor-pointer transition-colors">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <span class="flex items-center justify-center w-15 h-15 rounded-lg bg-white-500 text-white shadow-sm shadow-teal-500/30">
-                <img src="img-logo-pkbm.png" alt="Logo" class="w-13 h-13 object-contain" onerror="this.style.display='none'">  
-            </span>
-            <span class="font-semibold tracking-wide text-sm hidden sm:inline">PKBM Cahaya Kahuripan Bangsa</span>
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center p-1 shadow-2xs shrink-0">
+                    <img src="img-logo-pkbm.png" alt="Logo" class="w-full h-full object-contain" onerror="this.style.display='none'">
+                </div>
+                <span class="font-black tracking-tight text-sm hidden sm:inline text-slate-800">PKBM CKB</span>
+            </div>
         </div>
 
-        <div class="flex items-center gap-4">
-            <span id="namaGuruTop" class="text-xs font-bold hidden sm:inline text-slate-600 tracking-wide border-r border-slate-200 pr-4">Pengajar</span>
-            <button onclick="logout()" class="text-xs bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-200 hover:border-rose-500 font-bold px-3.5 py-2 rounded-xl transition-all shadow-xs cursor-pointer flex items-center gap-1.5 active:scale-[0.98]">
-                <i class="fa-solid fa-power-off text-[10px]"></i> Keluar
+        <div class="relative flex-1 max-w-sm hidden md:block">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 text-xs"></i>
+            <input type="text" placeholder="Cari data kelas atau siswa..." class="w-full bg-slate-50 border border-slate-200/70 rounded-xl pl-9 pr-3 py-2.5 text-xs font-medium text-slate-600 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/10 transition-all">
+        </div>
+
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button onclick="notifInfo('Belum ada notifikasi baru untuk kamu.')" class="w-9 h-9 rounded-full hover:bg-slate-100 hidden sm:flex items-center justify-center text-slate-500 cursor-pointer relative transition-colors">
+                <i class="fa-regular fa-bell text-sm"></i>
+                <span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-rose-500 ring-2 ring-white"></span>
+            </button>
+            <button onclick="notifInfo('Butuh bantuan? Hubungi admin sekolah di 2786466.')" class="w-9 h-9 rounded-full hover:bg-slate-100 hidden sm:flex items-center justify-center text-slate-500 cursor-pointer transition-colors">
+                <i class="fa-regular fa-circle-question text-sm"></i>
+            </button>
+            <div class="h-8 w-px bg-slate-200 mx-0.5 hidden sm:block"></div>
+            <div class="flex items-center gap-2.5">
+                <div class="text-right leading-tight hidden lg:block">
+                    <span id="namaGuruTop" class="text-xs font-bold text-slate-700 truncate max-w-[140px] block">Pengajar</span>
+                    <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Guru Mata Pelajaran</span>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-2xs shrink-0">
+                    <i class="fa-solid fa-chalkboard-user text-xs"></i>
+                </div>
+            </div>
+            <button onclick="logout()" class="text-xs bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-200 hover:border-rose-500 font-bold px-3 py-2 rounded-xl transition-all shadow-xs cursor-pointer flex items-center gap-1.5 active:scale-[0.98] ml-1">
+                <i class="fa-solid fa-power-off text-[10px]"></i> <span class="hidden sm:inline">Keluar</span>
             </button>
         </div>
     </header>
@@ -38,14 +61,20 @@
             <button onclick="toggleSidebar(false)" class="text-slate-400 hover:text-slate-600 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
-            <button onclick="gantiHalaman('jadwal')" id="menu-jadwal" class="menu-btn w-full bg-gradient-to-r from-teal-500 via-teal-600 to-emerald-600 text-white font-bold flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm text-left shadow-md shadow-teal-500/15 cursor-pointer">
-                <i class="fa-solid fa-calendar-days text-base w-5 text-center"></i> Jadwal Mengajar Anda
+            <button onclick="gantiHalaman('beranda')" id="menu-beranda" class="menu-btn w-full bg-gradient-to-r from-teal-500 via-teal-600 to-emerald-600 text-white font-bold flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm text-left shadow-md shadow-teal-500/15 cursor-pointer">
+                <i class="fa-solid fa-house text-base w-5 text-center"></i> Beranda
+            </button>
+            <button onclick="gantiHalaman('jadwal')" id="menu-jadwal" class="menu-btn w-full text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent hover:border-slate-100 font-medium flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm text-left cursor-pointer transition-all">
+                <i class="fa-solid fa-calendar-days text-base w-5 text-center text-slate-400"></i> Jadwal Mengajar Anda
             </button>
             <button onclick="gantiHalaman('agenda')" id="menu-agenda" class="menu-btn w-full text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent hover:border-slate-100 font-medium flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm text-left cursor-pointer transition-all">
                 <i class="fa-solid fa-book-bookmark text-base w-5 text-center text-slate-400"></i> Kelola Agenda Kelas
             </button>
             <button onclick="gantiHalaman('presensi')" id="menu-presensi" class="menu-btn w-full text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent hover:border-slate-100 font-medium flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm text-left cursor-pointer transition-all">
                 <i class="fa-solid fa-qrcode text-base w-5 text-center text-slate-400"></i> Presensi Siswa (QR)
+            </button>
+            <button onclick="gantiHalaman('riwayat-presensi'); muatRiwayatPresensiGuru();" id="menu-riwayat-presensi" class="menu-btn w-full text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent hover:border-slate-100 font-medium flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm text-left cursor-pointer transition-all">
+                <i class="fa-solid fa-clipboard-check text-base w-5 text-center text-slate-400"></i> Riwayat Presensi
             </button>
         </nav>
     </aside>
@@ -54,11 +83,61 @@
         
         <div class="absolute top-12 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-tr from-teal-400/10 to-emerald-400/10 blur-3xl rounded-full pointer-events-none"></div>
 
-        <section id="page-jadwal" class="halaman-panel relative z-10">
+        <section id="page-beranda" class="halaman-panel relative z-10 space-y-4">
+            <div class="bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-600 rounded-3xl p-6 sm:p-7 text-white shadow-md shadow-teal-700/10 relative overflow-hidden">
+                <div class="absolute right-[-5%] top-[-30%] w-48 h-48 sm:w-64 sm:h-64 bg-white/10 blur-3xl rounded-full"></div>
+                <i class="fa-solid fa-chalkboard-user absolute right-6 sm:right-10 bottom-[-16px] text-white/10 text-[90px] sm:text-[130px] pointer-events-none"></i>
+                <div class="relative z-10 space-y-1.5">
+                    <p id="sapaanWaktuGuru" class="text-[11px] sm:text-xs font-bold text-teal-100/80 uppercase tracking-wider">Selamat Datang</p>
+                    <h3 id="sapaanGuru" class="text-lg sm:text-2xl font-black tracking-tight">Halo, Pengajar!</h3>
+                    <p class="text-[11px] sm:text-xs text-teal-100/90 max-w-xl font-medium leading-relaxed pt-1">Berikut ringkasan aktivitas mengajar Anda. Gunakan menu di kiri untuk mengelola jadwal, agenda KBM, dan presensi siswa.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <button onclick="gantiHalaman('jadwal')" class="text-left bg-white/90 backdrop-blur-xl border border-white rounded-2xl p-4 shadow-xs hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mb-2.5"><i class="fa-solid fa-calendar-days text-sm"></i></div>
+                    <p class="text-xs font-bold text-slate-700">Jadwal Mengajar</p>
+                    <p class="text-[10.5px] text-slate-400 font-medium mt-0.5">Lihat penugasan kelas</p>
+                </button>
+                <button onclick="gantiHalaman('agenda')" class="text-left bg-white/90 backdrop-blur-xl border border-white rounded-2xl p-4 shadow-xs hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2.5"><i class="fa-solid fa-book-bookmark text-sm"></i></div>
+                    <p class="text-xs font-bold text-slate-700">Agenda Kelas</p>
+                    <p class="text-[10.5px] text-slate-400 font-medium mt-0.5">Isi jurnal mengajar</p>
+                </button>
+                <button onclick="gantiHalaman('presensi')" class="text-left bg-white/90 backdrop-blur-xl border border-white rounded-2xl p-4 shadow-xs hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2.5"><i class="fa-solid fa-qrcode text-sm"></i></div>
+                    <p class="text-xs font-bold text-slate-700">Presensi QR</p>
+                    <p class="text-[10.5px] text-slate-400 font-medium mt-0.5">Buka sesi absen siswa</p>
+                </button>
+                <button onclick="gantiHalaman('riwayat-presensi'); muatRiwayatPresensiGuru();" class="text-left bg-white/90 backdrop-blur-xl border border-white rounded-2xl p-4 shadow-xs hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-2.5"><i class="fa-solid fa-clipboard-check text-sm"></i></div>
+                    <p class="text-xs font-bold text-slate-700">Riwayat Presensi</p>
+                    <p class="text-[10.5px] text-slate-400 font-medium mt-0.5">Rekap kehadiran siswa</p>
+                </button>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-xl border border-white rounded-2xl p-5 shadow-xs">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="font-black text-slate-700 text-xs uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-calendar-week text-teal-500"></i> Jadwal Mengajar Anda</h4>
+                    <button onclick="gantiHalaman('jadwal')" class="text-[10.5px] font-bold text-teal-600 hover:text-teal-700 cursor-pointer">Lihat Semua &rarr;</button>
+                </div>
+                <div id="previewJadwalBeranda" class="grid sm:grid-cols-2 gap-2.5 text-xs">
+                    <div class="col-span-full text-center py-6 text-xs text-slate-400 italic font-medium">Memuat jadwal mengajar...</div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-teal-800 to-teal-700 rounded-2xl p-6 text-white shadow-md shadow-teal-800/10">
+                <p class="text-[10.5px] font-bold text-teal-100/60 uppercase tracking-widest mb-2">Visi Pendidikan Cahaya Kahuripan</p>
+                <p class="text-sm sm:text-base font-semibold italic leading-relaxed max-w-2xl">"Mendidik, memberdayakan, serta menghasilkan anak bangsa yang mandiri, tangguh, berprestasi, dan berbudi pekerti luhur sehingga siap untuk berkontribusi nyata bagi pembangunan bangsa."</p>
+            </div>
+        </section>
+
+        <section id="page-jadwal" class="halaman-panel hidden relative z-10">
             <div class="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] space-y-5">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                     <h3 class="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-week text-teal-500 text-sm"></i> Plotting Jadwal Admin
+                        <i class="fa-solid fa-calendar-week text-teal-500 text-sm"></i> Jadwal Mengajar Anda
                     </h3>
                     <button onclick="loadJadwalGuruServer()" class="text-xs font-bold bg-slate-50 hover:bg-slate-100 border border-slate-200 text-teal-600 px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-xs">
                         <i class="fa-solid fa-rotate text-[10px]"></i> Sync
@@ -264,6 +343,38 @@
             </div>
         </section>
 
+        <section id="page-riwayat-presensi" class="halaman-panel hidden relative z-10">
+            <div class="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] space-y-5">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                    <h3 class="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check text-teal-500"></i> Riwayat Presensi Kelas
+                    </h3>
+                    <button onclick="muatRiwayatPresensiGuru()" class="text-[10px] font-bold bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer shadow-xs active:scale-95">
+                        <i class="fa-solid fa-rotate text-[9px]"></i> Refresh
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-400 -mt-2">Daftar sesi KBM yang sudah berlangsung. Klik "Lihat Kehadiran" untuk melihat siapa saja yang hadir pada sesi tersebut.</p>
+
+                <div class="overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-xs">
+                    <table class="w-full text-left border-collapse text-[11px]">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold tracking-wide">
+                                <th class="px-4 py-3">Tanggal & Waktu</th>
+                                <th class="px-4 py-3">Mapel & Kelas</th>
+                                <th class="px-4 py-3">Materi</th>
+                                <th class="px-4 py-3 text-center w-40">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelRiwayatPresensiBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                            <tr>
+                                <td colspan="4" class="px-4 py-8 text-center text-slate-400 italic">Memuat riwayat presensi...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <script>
@@ -285,7 +396,13 @@
             }
 
             document.getElementById('namaGuruTop').innerText = userLogin.nama_lengkap;
-            
+
+            const jamSkrg = new Date().getHours();
+            const sapaanWaktu = jamSkrg < 11 ? "Selamat Pagi" : (jamSkrg < 15 ? "Selamat Siang" : (jamSkrg < 18 ? "Selamat Sore" : "Selamat Malam"));
+            const namaDepanGuru = (userLogin.nama_lengkap || "Pengajar").split(" ")[0];
+            if (document.getElementById('sapaanWaktuGuru')) document.getElementById('sapaanWaktuGuru').innerText = sapaanWaktu;
+            if (document.getElementById('sapaanGuru')) document.getElementById('sapaanGuru').innerText = "Halo, Pak/Bu " + namaDepanGuru + "!";
+
             loadJadwalGuruServer();
             muatRiwayatAgendaServer();
         };
@@ -368,8 +485,25 @@
                         const optionTag = `<option value="${j.id_jadwal}">${j.mata_pelajaran} - ${j.kelas} (${j.hari})</option>`;
                         selectAgenda.innerHTML += optionTag;
                     });
+
+                    const previewBeranda = document.getElementById('previewJadwalBeranda');
+                    if (previewBeranda) {
+                        previewBeranda.innerHTML = result.data.slice(0, 4).map(j => {
+                            const jamBersih = bersihkanWaktuMengajar(j.jam_mengajar);
+                            return `
+                            <div class="p-3 bg-slate-50 border border-slate-150 rounded-xl flex items-center justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="font-bold text-slate-800 text-xs truncate">${j.mata_pelajaran}</p>
+                                    <p class="text-[10.5px] text-slate-400 font-semibold mt-0.5">${j.kelas} &middot; ${j.hari}</p>
+                                </div>
+                                <span class="text-[10.5px] font-bold text-teal-600 shrink-0">${jamBersih}</span>
+                            </div>`;
+                        }).join('');
+                    }
                 } else {
                     gridBody.innerHTML = `<div class="col-span-full py-8 text-center text-slate-400 italic">Belum ada penugasan mengajar dari Admin.</div>`;
+                    const previewBerandaKosong = document.getElementById('previewJadwalBeranda');
+                    if (previewBerandaKosong) previewBerandaKosong.innerHTML = `<div class="col-span-full text-center py-6 text-xs text-slate-400 italic font-medium">Belum ada penugasan mengajar dari Admin.</div>`;
                 }
             } catch (e) {
                 gridBody.innerHTML = `<div class="col-span-full py-8 text-center text-rose-500 font-semibold">Gagal Sinkronisasi Jadwal. Silakan periksa koneksi internet Anda.</div>`;
@@ -720,6 +854,95 @@
             }
         }
 
+        // ===== RIWAYAT PRESENSI (rekap kehadiran per sesi KBM yang sudah lewat) =====
+        async function muatRiwayatPresensiGuru() {
+            const tbody = document.getElementById('tabelRiwayatPresensiBody');
+            if (!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400 italic"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-teal-500"></i>Memuat riwayat presensi...</td></tr>`;
+            await muatRiwayatAgendaServer(); // pastikan listAgendaLokal ter-update dari server
+            const daftar = [...listAgendaLokal].sort((a, b) => {
+                const ta = new Date(`${a.tanggal}T${a.jam || '00:00'}`).getTime() || 0;
+                const tb = new Date(`${b.tanggal}T${b.jam || '00:00'}`).getTime() || 0;
+                return tb - ta;
+            });
+            renderTabelRiwayatPresensiGuru(daftar);
+        }
+
+        function renderTabelRiwayatPresensiGuru(daftar) {
+            const tbody = document.getElementById('tabelRiwayatPresensiBody');
+            if (!tbody) return;
+            if (!daftar || daftar.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400 italic">Belum ada riwayat sesi KBM.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = "";
+            daftar.forEach(item => {
+                const idAgenda = item.id_internal || '';
+                const infoText = `${item.mapel || '-'} - ${item.kelas || '-'} (${item.tanggal || '-'})`;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-4 py-3 font-semibold text-slate-600">${item.tanggal || '-'}<br><span class="text-[10px] text-teal-600 font-bold">${bersihkanWaktuMengajar(item.jam)} - ${item.jam_akhir ? bersihkanWaktuMengajar(item.jam_akhir) : 'Selesai'}</span></td>
+                        <td class="px-4 py-3"><span class="font-bold text-teal-800">${item.mapel || '-'}</span><br><span class="text-[10px] text-slate-400 font-mono uppercase">${item.kelas || '-'}</span></td>
+                        <td class="px-4 py-3 text-slate-500">${item.materi || '-'}</td>
+                        <td class="px-4 py-3 text-center">
+                            <button onclick="bukaDetailPresensiGuru('${idAgenda}', '${infoText.replace(/'/g, "\\'")}')" class="text-teal-600 hover:bg-teal-500 hover:text-white border border-teal-200 hover:border-teal-500 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer font-bold text-[10px] shadow-xs active:scale-95">
+                                <i class="fa-solid fa-users-viewfinder mr-1"></i> Lihat Kehadiran
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        async function bukaDetailPresensiGuru(idAgenda, infoText) {
+            const modal = document.getElementById('modalDetailPresensi');
+            const judul = document.getElementById('judulModalDetailPresensi');
+            const rekap = document.getElementById('rekapModalDetailPresensi');
+            const tbody = document.getElementById('tabelDetailPresensiBody');
+            if (!modal) return;
+            judul.innerText = infoText;
+            rekap.innerText = "";
+            tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-slate-400 italic"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-teal-500"></i>Memuat data kehadiran...</td></tr>`;
+            modal.classList.remove('hidden');
+            if (!idAgenda) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-slate-400 italic">ID sesi tidak ditemukan.</td></tr>`;
+                return;
+            }
+            try {
+                const res = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getMonitorKehadiran', id_agenda: idAgenda })
+                });
+                const result = await res.json();
+                if (result.status === "success" && result.data.length > 0) {
+                    tbody.innerHTML = "";
+                    let jumlahHadir = 0;
+                    result.data.forEach(s => {
+                        const hadir = s.status === "HADIR";
+                        if (hadir) jumlahHadir++;
+                        const badgeStatus = hadir
+                            ? `<span class="px-2.5 py-0.5 font-black bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-md text-[9px] tracking-wide"><i class="fa-solid fa-check text-[8px]"></i> HADIR</span>`
+                            : `<span class="px-2.5 py-0.5 font-black bg-slate-50 text-slate-400 border border-slate-200 rounded-md text-[9px] tracking-wide">BELUM ABSEN</span>`;
+                        tbody.innerHTML += `
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-4 py-3 font-bold text-slate-800">${s.nama_lengkap}</td>
+                                <td class="px-4 py-3 text-slate-500 font-mono text-[10px] uppercase font-bold">${s.kelas}</td>
+                                <td class="px-4 py-3 text-center align-middle">${badgeStatus}</td>
+                            </tr>`;
+                    });
+                    rekap.innerText = `${jumlahHadir} dari ${result.data.length} siswa hadir`;
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-slate-400 italic">Belum ada data siswa untuk sesi ini.</td></tr>`;
+                }
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-rose-500 font-semibold">Gagal memuat data kehadiran.</td></tr>`;
+            }
+        }
+
+        function tutupDetailPresensi() {
+            const modal = document.getElementById('modalDetailPresensi');
+            if (modal) modal.classList.add('hidden');
+        }
+
         function logout() {
             const modal = document.getElementById('modalKonfirmasiLogout');
             if (modal) modal.classList.remove('hidden');
@@ -746,6 +969,35 @@
         <p class="text-[10px] text-slate-400 mt-4 font-medium"><i class="fa-solid fa-camera mr-1"></i> Arahkan scanner siswa ke QR Code ini</p>
     </div>
 </div>
+
+    <!-- ===== MODAL DETAIL KEHADIRAN (dipakai oleh Riwayat Presensi) ===== -->
+    <div id="modalDetailPresensi" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-[999] p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 animate-[fadeInScale_0.2s_ease-out] max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-start mb-1">
+                <div>
+                    <h3 class="text-sm font-black text-slate-800 uppercase tracking-wide">Detail Kehadiran</h3>
+                    <p id="judulModalDetailPresensi" class="text-[11px] text-teal-700 font-bold mt-1 bg-teal-50 py-1 px-2 rounded-lg border border-teal-100 inline-block">-</p>
+                </div>
+                <button onclick="tutupDetailPresensi()" class="text-slate-400 hover:text-rose-500 bg-slate-100 p-2 rounded-full cursor-pointer transition-colors shrink-0"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p id="rekapModalDetailPresensi" class="text-[11px] font-bold text-emerald-600 mb-3"></p>
+            <div class="overflow-y-auto overflow-x-auto border border-slate-200 rounded-2xl bg-white shadow-xs flex-1">
+                <table class="w-full text-left border-collapse text-[11px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold tracking-wide sticky top-0">
+                            <th class="px-4 py-2.5">Nama Lengkap Siswa</th>
+                            <th class="px-4 py-2.5">Rombel Kelas</th>
+                            <th class="px-4 py-2.5 text-center">Status Presensi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelDetailPresensiBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                        <tr><td colspan="3" class="px-4 py-6 text-center text-slate-400 italic">Memuat...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div id="modalCetakAgendaGuru" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
         <div id="areaCetakAgendaGuruDokumen" class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-8 border border-slate-100 my-auto text-black">
 
