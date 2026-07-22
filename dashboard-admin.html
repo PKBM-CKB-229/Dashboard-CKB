@@ -274,8 +274,10 @@
                             <input type="text" id="mapelJadwal" required class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition" placeholder="Sosiologi">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Kode / ID Guru Pengajar</label>
-                            <input type="text" id="idGuruJadwal" required class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition" placeholder="G001">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Guru Pengajar</label>
+                            <select id="idGuruJadwal" required class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none bg-white font-medium text-slate-700 transition">
+                                <option value="">-- Memuat data guru... --</option>
+                            </select>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -720,6 +722,7 @@
             } else if (targetPanel === 'input-jadwal') {
                 judulHalamanEl.innerText = "Manajemen Jadwal Pelajaran Harian";
                 muatDataJadwalAdmin();
+                isiDropdownGuruJadwal();
             } else if (targetPanel === 'input-ujian') {
                 judulHalamanEl.innerText = "Terbitkan Jadwal Ujian Resmi";
             } else if (targetPanel === 'keringanan') {
@@ -1800,6 +1803,32 @@
             notifGagal("Terjadi kesalahan jaringan saat menyimpan data.");
         }
     }
+    // 🩹 FIX BUG: Isi dropdown "Guru Pengajar" dengan ID guru yang VALID (bukan diketik manual)
+    // Ini memperbaiki bug guru tidak bisa kirim dokumentasi/mulai sesi karena admin salah ketik ID guru.
+    async function isiDropdownGuruJadwal() {
+        const selIdGuru = document.getElementById('idGuruJadwal');
+        if (!selIdGuru) return;
+        try {
+            const resp = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'getSemuaUserAdmin' })
+            });
+            const hasil = await resp.json();
+            const daftarGuru = (hasil.status === 'success' && Array.isArray(hasil.data))
+                ? hasil.data.filter(u => u.role === 'guru')
+                : [];
+
+            selIdGuru.innerHTML = daftarGuru.length
+                ? `<option value="">-- Pilih Nama Guru --</option>` + daftarGuru.map(g =>
+                    `<option value="${g.id_user}">${g.nama_lengkap} (${g.username})</option>`
+                  ).join('')
+                : `<option value="">Belum ada akun guru terdaftar</option>`;
+        } catch (error) {
+            console.error("Gagal memuat daftar guru untuk jadwal:", error);
+            selIdGuru.innerHTML = `<option value="">Gagal memuat data guru</option>`;
+        }
+    }
+
     // 5. PROSES DAFTARKAN JADWAL PELAJARAN BARU
     const formJadwal = document.getElementById('formJadwal');
     if (formJadwal) {
